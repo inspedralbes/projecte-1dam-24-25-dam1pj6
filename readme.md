@@ -14,3 +14,6 @@ Actualment, el projecte es troba en fase de desenvolupament.
 
 - **Documentació PHPDoc:**
 - **Projecte Desplegat:**
+
+## Esquema
+![Esquema de pantalla](/Esquema.png)
