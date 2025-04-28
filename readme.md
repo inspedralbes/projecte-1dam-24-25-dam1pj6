@@ -16,4 +16,4 @@ Actualment, el projecte es troba en fase de desenvolupament.
 - **Projecte Desplegat:**
 
 ## Esquema
-![Esquema de pantalla](/Esquema.png)
+![Esquema de pantalla](/Docs/Esquema.png)
