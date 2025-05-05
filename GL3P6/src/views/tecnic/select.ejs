@@ -1,0 +1,16 @@
+<%- include('../partials/header', { title: 'Afegir moto' }) %>
+<h1>Selecciona tu nombre como técnico</h1>
+
+<form action="/tecnic/incidencies" method="GET">
+  <div class="form-group">
+    <label for="tecnic_id">Técnico</label>
+    <select class="form-control" id="tecnic_id" name="tecnic_id" required>
+      <% tecnics.forEach(tecnic => { %>
+        <option value="<%= tecnic.id %>"><%= tecnic.nom %></option>
+      <% }) %>
+    </select>
+  </div>
+  <button type="submit" class="btn btn-primary">Ver incidencias</button>
+</form>
+
+<%- include('../partials/footer') %>

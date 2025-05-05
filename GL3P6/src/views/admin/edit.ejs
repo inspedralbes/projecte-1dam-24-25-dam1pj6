@@ -1,0 +1,73 @@
+<%- include('../partials/header', { title: 'Editar Incidència' }) %>
+
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h3 class="card-title text-center">Editar Incidència</h3>
+      <form action="/admin/<%= incidencia.id %>/update" method="POST">
+        <div class="mb-3">
+          <label for="nom" class="form-label">Nom</label>
+          <input type="text" class="form-control" id="nom" name="nom" value="<%= incidencia.nom %>" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="departament_id" class="form-label">Departament</label>
+          <select class="form-control" id="departament_id" name="departament_id" required>
+            <% departamentos.forEach(departamento => { %>
+              <option value="<%= departamento.id %>" <%= departamento.id === incidencia.departament_id ? 'selected' : '' %>>
+                <%= departamento.nom %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="tipus" class="form-label">Tipus</label>
+          <input type="text" class="form-control" id="tipus" name="tipus" value="<%= incidencia.tipus %>" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="descripcio" class="form-label">Descripció</label>
+          <textarea class="form-control" id="descripcio" name="descripcio" rows="4" required><%= incidencia.descripcio %></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="estat_id" class="form-label">Estat</label>
+          <select class="form-control" id="estat_id" name="estat_id" required>
+            <% estats.forEach(estat => { %>
+              <option value="<%= estat.id %>" <%= estat.id === incidencia.estat_id ? 'selected' : '' %>>
+                <%= estat.nom %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="tecnic_id" class="form-label">Assignació de tècnic</label>
+          <select class="form-control" id="tecnic_id" name="tecnic_id" required>
+            <% tecnics.forEach(tecnic => { %>
+              <option value="<%= tecnic.id %>" <%= tecnic.id === incidencia.tecnic_id ? 'selected' : '' %>>
+                <%= tecnic.nom %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+        
+        <div class="mb-3">
+          <label for="dataresolucio" class="form-label">Data resolució</label>
+          <input type="date" class="form-control" id="dataresolucio" name="dataresolucio" value="<%= incidencia.dataresolucio ? new Date(incidencia.dataresolucio).toISOString().split('T')[0] : '' %>"
+
+        </div>
+        
+
+        <button type="submit" class="btn btn-primary w-100">Actualizar Incidència</button>
+      </form>
+
+      <div class="mt-3 text-center">
+        <a href="/admin" class="btn btn-link">Tornar a la llista d'incidències</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

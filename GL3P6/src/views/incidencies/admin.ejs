@@ -1,0 +1,41 @@
+<%- include('../partials/header', { title: 'Panel d\'Administrador' }) %>
+
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Administració d'Incidències</h1>
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Tipus</th>
+        <th>Descripció</th>
+        <th>Data Creació</th>
+        <th>Estat</th>
+        <th>Data Resolució</th>
+        <th>Accions</th>
+      </tr>
+    </thead>
+    <tbody>
+        <% incidencies.forEach(function(incidencia) { %>
+          <tr>
+            <td><%= incidencia.id %></td>
+            <td><%= incidencia.nom %></td>
+            <td><%= incidencia.departament %></td>
+            <td><%= incidencia.tipus %></td>
+            <td><%= incidencia.descripcio %></td>
+            <td><%= incidencia.datacreacio %></td>
+            <td><%= incidencia.estat %></td>
+            <td><%= incidencia.dataresolucio || '—' %></td>
+            <td>
+              <a href="/incidencies/<%= incidencia.id %>/edit-status" class="btn btn-sm btn-warning">Editar</a>
+              <a href="/incidencies/<%= incidencia.id %>/delete" class="btn btn-sm btn-danger">Eliminar</a>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+      
+  </table>
+  <a href="/incidencies" class="btn btn-secondary mt-3">Tornar</a>
+</div>
+
+<%- include('../partials/footer') %>

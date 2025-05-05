@@ -1,0 +1,38 @@
+<%- include('../partials/header', { title: 'Crear Incidència' }) %>
+
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h3 class="card-title text-center">Crear Incidència</h3>
+      <form action="/incidencies/create" method="POST">
+        <div class="mb-3">
+          <label for="nom" class="form-label">Nom</label>
+          <input type="text" class="form-control" id="nom" name="nom" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="departament_id" class="form-label">Departament</label>
+          <select class="form-control" id="departament_id" name="departament_id" required>
+            <% departamentos.forEach(departamento => { %>
+              <option value="<%= departamento.id %>"><%= departamento.nom %></option> 
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="tipus" class="form-label">Tipus</label>
+          <input type="text" class="form-control" id="tipus" name="tipus" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="descripcio" class="form-label">Descripció</label>
+          <textarea class="form-control" id="descripcio" name="descripcio" rows="4" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Crear Incidència</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

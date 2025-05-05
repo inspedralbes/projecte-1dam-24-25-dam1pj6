@@ -1,0 +1,24 @@
+<h1>Editar Incidencia</h1>
+
+<form action="/tecnic/incidencies/<%= incidencia.id %>/update" method="POST">
+  <div class="form-group">
+    <label for="estat_id">Estat</label>
+    <select class="form-control" id="estat_id" name="estat_id">
+      <% estats.forEach(estat => { %>
+        <option value="<%= estat.id %>" <%= estat.id === incidencia.estat_id ? 'selected' : '' %>><%= estat.nom %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="dataresolucio">Data de Resolució</label>
+    <input type="datetime-local" class="form-control" id="dataresolucio" name="dataresolucio" value="<%= incidencia.dataresolucio ? incidencia.dataresolucio : '' %>">
+  </div>
+
+  <div class="form-group">
+    <label for="acceptat">Acceptar Incidència</label>
+    <input type="checkbox" id="acceptat" name="acceptat" value="true" <%= incidencia.acceptat ? 'checked' : '' %> />
+  </div>
+
+  <button type="submit" class="btn btn-primary">Actualizar</button>
+</form>

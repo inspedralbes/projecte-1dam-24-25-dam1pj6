@@ -1,0 +1,44 @@
+<%- include('../partials/header', { title: 'Panell d\'Administració' }) %>
+
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-body">
+      <h3 class="card-title text-center mb-4">Administració d'Incidències</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nom</th>
+            <th>Departament</th>
+            <th>Tipus</th>
+            <th>Data Creació</th>
+            <th>Tècnic</th>
+            <th>Estat</th>
+            <th>Data resolució</th>
+            <th>Accions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% incidencies.forEach(incidencia => { %>
+            <tr>
+              <td><%= incidencia.id %></td>
+              <td><%= incidencia.nom %></td>
+              <td><%= incidencia.departament ? incidencia.departament.nom : 'N/A' %></td>
+              <td><%= incidencia.tipus %></td>
+              <td><%= incidencia.datacreacio %></td>
+              <td><%= incidencia.tecnic ? incidencia.tecnic.nom: 'N/A' %></td>
+              <td><%= incidencia.estat ? incidencia.estat.nom : 'N/A' %></td>
+              <td><%= incidencia.dataresolucio %></td>
+              <td>
+                <a href="/admin/<%= incidencia.id %>/edit" class="btn btn-sm btn-warning">Editar</a>
+                <a href="/admin/<%= incidencia.id %>/delete" class="btn btn-danger btn-sm">Eliminar</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>
