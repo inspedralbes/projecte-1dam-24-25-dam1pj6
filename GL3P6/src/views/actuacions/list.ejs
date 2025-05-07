@@ -1,0 +1,31 @@
+<%- include('../partials/header', { title: 'Actuacions de la Incidència' }) %>
+
+<h1>Actuacions de la Incidència: <%= incidencia.nom %></h1>
+
+<% if (actuacions.length === 0) { %>
+  <p>No hi ha actuacions registrades per aquesta incidència.</p>
+<% } else { %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Descripció</th>
+        <th>Temps Invertit (min)</th>
+        <th>Visible</th>
+        <th>Resolta</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% actuacions.forEach(actuacio => { %>
+        <tr>
+          <td><%= actuacio.descripcio %></td>
+          <td><%= actuacio.temps_invertit %></td>
+          <td><%= actuacio.visible ? 'Sí' : 'No' %></td>
+          <td><%= actuacio.resolta ? 'Sí' : 'No' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+
+<%- include('../partials/footer') %>

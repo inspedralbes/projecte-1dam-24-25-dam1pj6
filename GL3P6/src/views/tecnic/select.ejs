@@ -1,16 +1,25 @@
-<%- include('../partials/header', { title: 'Afegir moto' }) %>
-<h1>Selecciona tu nombre como técnico</h1>
+<%- include('../partials/header', { title: 'Tècnic' }) %>
+<h1 class="text-center my-4">Selecciona Tècnic</h1>
 
 <form action="/tecnic/incidencies" method="GET">
   <div class="form-group">
-    <label for="tecnic_id">Técnico</label>
-    <select class="form-control" id="tecnic_id" name="tecnic_id" required>
-      <% tecnics.forEach(tecnic => { %>
-        <option value="<%= tecnic.id %>"><%= tecnic.nom %></option>
+    <label for="tecnic_id" class="h4"></label>
+    <div class="row">
+      <% tecnics.forEach((tecnic, index) => { %>
+        <% if (index % 3 === 0 && index !== 0) { %> </div><div class="row"> <% } %>
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-lg rounded-lg border-0 hover-scale">
+            <img src="/GL3P6/user.png" class="card-img-top rounded-circle mx-auto mt-3" alt="">
+            <div class="card-body text-center">
+              <h5 class="card-title text-primary font-weight-bold"><%= tecnic.nom %></h5>
+              <p class="card-text text-muted"><%= tecnic.incidenciesCount %> incidència<%= tecnic.incidenciesCount === 1 ? '' : 's' %></p>
+              <button type="submit" class="btn btn-info btn-block" name="tecnic_id" value="<%= tecnic.id %>">Veure incidències</button>
+            </div>
+          </div>
+        </div>
       <% }) %>
-    </select>
+    </div>
   </div>
-  <button type="submit" class="btn btn-primary">Ver incidencias</button>
 </form>
 
 <%- include('../partials/footer') %>

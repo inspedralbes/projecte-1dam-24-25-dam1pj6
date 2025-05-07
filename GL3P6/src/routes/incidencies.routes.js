@@ -6,24 +6,31 @@ const Estat = require('../models/estat');
 const Tecnic = require('../models/tecnic');
 const moment = require('moment-timezone');
 
-// Ruta para manejar la búsqueda de incidencias por ID
 router.post('/buscar', async (req, res) => {
-  const { id } = req.body; // Obtener el ID del formulario
-
+  const { id } = req.body;
+  if (!id || id.trim() === '') {
+    return res.render('index', { error: 'Has d’introduir una ID.', incidencia: null });
+  }
   try {
-    // Buscar la incidencia en la base de datos
-    const incidencia = await Incidencia.findOne({ where: { id: id } });
+    const incidencia = await Incidencia.findOne({
+      where: { id: id },
+      include: [
+        { model: Departamento, as: 'departament' },
+        { model: Estat, as: 'estat' }
+      ]
+    });
 
     if (incidencia) {
-      res.render('index', { incidencia }); // Renderiza la vista y pasa la incidencia encontrada
+      res.render('index', { incidencia, error: null });
     } else {
-      res.render('index', { error: 'No s\'ha trobat la incidència.' }); // Si no encuentra la incidencia
+      res.render('index', { error: 'No s\'ha trobat la incidència.', incidencia: null });
     }
   } catch (error) {
     console.error(error);
-    res.render('index', { error: 'Error al buscar la incidència.' }); // Manejo de errores
+    res.render('index', { error: 'Error al buscar la incidència.', incidencia: null });
   }
 });
+
 
 // Listado de incidencias
 router.get('/', async (req, res) => {

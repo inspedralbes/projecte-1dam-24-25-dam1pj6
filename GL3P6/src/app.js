@@ -66,11 +66,11 @@ sequelize.sync({ force: false })
     
     for (const tecnico of tecnicos) {
       await Tecnic.findOrCreate({
-        where: { email: tecnico.email }, // Verificamos por mail para evitar duplicados
+        where: { email: tecnico.email }, 
         defaults: {
-          nom: tecnico.nom, // Asegúrate de que 'nom' es correcto
-          cognoms: tecnico.cognoms, // Asegúrate de que 'cognoms' es correcto
-          email: tecnico.email // Asegúrate de que 'email' es correcto
+          nom: tecnico.nom, 
+          cognoms: tecnico.cognoms, 
+          email: tecnico.email 
         }
       });
     }    

@@ -4,6 +4,7 @@ const Incidencia = require('../models/incidencia');
 const Departamento = require('../models/departament'); 
 const Estat = require('../models/estat'); 
 const Tecnic = require('../models/tecnic');
+const Actuacio = require('../models/actuacio');
 
 // Mostrar listado de incidencias
 router.get('/', async (req, res) => {
@@ -104,5 +105,32 @@ router.get('/:id/delete', async (req, res) => {
     }
   }
 });
+
+// Ruta para ver las actuaciones de una incidencia
+router.get('/:id/actuacions', async (req, res) => {
+  try {
+    const incidenciaId = req.params.id;
+    const incidencia = await Incidencia.findByPk(incidenciaId, {
+      include: [
+        { model: Departamento, as: 'departament' },
+        { model: Estat, as: 'estat' },
+        { model: Tecnic, as: 'tecnic' },
+        { model: Actuacio, as: 'actuacions' }  
+      ]
+    });
+
+    if (!incidencia) {
+      return res.status(404).send('Incidència no trobada');
+    }
+    res.render('actuacions/list', {
+      incidencia,
+      actuacions: incidencia.actuacions || []
+    });    
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al mostrar les actuacions ' + error);
+  }
+});
+
 
 module.exports = router;

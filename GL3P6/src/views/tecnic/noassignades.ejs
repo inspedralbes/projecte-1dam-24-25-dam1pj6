@@ -1,0 +1,45 @@
+<%- include('../partials/header', { title: 'Incidències no assignades' }) %>
+
+<h1>Incidències no assignades</h1>
+
+<form action="/tecnic/incidencies/assignar" method="POST" id="assignarForm">
+  <input type="hidden" name="tecnic_id" value="<%= tecnic.id %>">
+  <% if (incidencies.length === 0) { %>
+    <p>No hi ha incidències pendents d'assignació.</p>
+  <% } else { %>
+    <table class="table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Nom</th>
+          <th>Descripció</th>
+          <th>Data Creació</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% incidencies.forEach(incidencia => { %>
+          <tr>
+            <td><input type="checkbox" name="incidencies_ids[]" value="<%= incidencia.id %>"></td>
+            <td><%= incidencia.nom %></td>
+            <td><%= incidencia.descripcio %></td>
+            <td><%= incidencia.datacreacio %></td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <button type="submit" class="btn btn-success">Assignar-me les seleccionades</button>
+  <% } %>
+</form>
+
+<script>
+  document.getElementById('assignarForm').addEventListener('submit', function(event) {
+    const checkboxes = document.querySelectorAll('input[name="incidencies_ids[]"]:checked');
+    
+    if (checkboxes.length === 0) {
+      event.preventDefault(); 
+      alert('Si us plau, selecciona almenys una incidència.');
+    }
+  });
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,35 @@
+<%- include('../partials/header', { title: 'Nova Actuació' }) %>
+
+<h1>Afegir nova actuació a la Incidència: <%= incidencia.nom %></h1>
+
+<form action="/tecnic/incidencies/<%= incidencia.id %>/actuacions/create" method="POST">
+  <div class="form-group">
+    <label for="descripcio">Descripció:</label>
+    <input type="text" name="descripcio" id="descripcio" class="form-control" required>
+  </div>
+
+  <div class="form-group">
+    <label for="temps_invertit">Temps invertit (minuts):</label>
+    <input type="number" name="temps_invertit" id="temps_invertit" class="form-control" required>
+  </div>
+
+  <div class="form-group">
+    <label for="visible">Visible per l'usuari:</label>
+    <select name="visible" id="visible" class="form-control">
+      <option value="true">Sí</option>
+      <option value="false">No</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="resolta">Resolta:</label>
+    <select name="resolta" id="resolta" class="form-control">
+      <option value="true">Sí</option>
+      <option value="false">No</option>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Afegir actuació</button>
+</form>
+
+<%- include('../partials/footer') %>

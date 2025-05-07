@@ -4,6 +4,7 @@ const sequelize = require('../db');
 const Departament = require('./departament');
 const Estat = require('./estat');  
 const Tecnic = require('./tecnic');
+const Actuacio = require('./actuacio'); 
 
 const Incidencia = sequelize.define('Incidencia', {
   id: {
@@ -70,5 +71,14 @@ Incidencia.belongsTo(Departament, {
 Incidencia.belongsTo(Tecnic, { 
   foreignKey: 'tecnic_id', 
   as: 'tecnic' });
+Incidencia.hasMany(Actuacio, {
+  foreignKey: 'incidencia_id',
+  as: 'actuacions'
+});
+Actuacio.belongsTo(Incidencia, {
+  foreignKey: 'incidencia_id',
+  as: 'incidencia'
+});
+
 
 module.exports = Incidencia;

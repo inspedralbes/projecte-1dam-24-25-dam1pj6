@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db');  // Asegúrate de que este es el archivo donde se inicializa tu instancia de sequelize
+const sequelize = require('../db');
 
 const Estat = sequelize.define('Estat', {
   id: {
@@ -10,12 +10,12 @@ const Estat = sequelize.define('Estat', {
   nom: {
     type: DataTypes.STRING(255),
     allowNull: false,
-    defaultValue: 'Pendent d\'assignar',  // El valor por defecto que mencionas
+    defaultValue: 'Pendent d\'assignar',  
     unique: true,
   },
 }, {
-  tableName: 'Estat',  // Aquí es donde especificamos el nombre de la tabla exacto
-  timestamps: false,  // Si no usas createdAt/updatedAt
+  tableName: 'Estat',  
+  timestamps: false,  
 });
 
 module.exports = Estat;
