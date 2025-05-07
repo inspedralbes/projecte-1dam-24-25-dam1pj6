@@ -1,0 +1,23 @@
+{
+  "name": "projecte-1dam-24-25-dam1pj6",
+  "version": "1.0.0",
+  "description": "- Roberto Lotreanu\r - Harsh Jagani",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inspedralbes/projecte-1dam-24-25-dam1pj6.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/inspedralbes/projecte-1dam-24-25-dam1pj6/issues"
+  },
+  "homepage": "https://github.com/inspedralbes/projecte-1dam-24-25-dam1pj6#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
