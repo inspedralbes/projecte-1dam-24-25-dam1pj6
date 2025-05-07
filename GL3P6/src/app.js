@@ -5,13 +5,18 @@ const app = express();
 const incidenciaRoutes = require('./routes/incidencies.routes');
 const admin = require('./routes/admin.routes');
 const tecnic = require('./routes/tecnic.routes');
-const Estat = require('./models/estat'); // O ajusta la ruta según corresponda
-const Departamento = require('./models/departament'); // Asegúrate también de importar Departamento
+const Estat = require('./models/estat'); // Adjust path as necessary
+const Departamento = require('./models/departament'); // Adjust path as necessary
 const Tecnic = require('./models/tecnic');
+
+// Serve static files (like styles.css) from the 'public' folder
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // Configurar EJS como motor de plantillas
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));  // Ruta a tus vistas
+
 app.use(express.urlencoded({ extended: true })); 
 
 // Rutas de incidencias

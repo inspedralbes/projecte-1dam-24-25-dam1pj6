@@ -8,20 +8,19 @@ const moment = require('moment-timezone');
 
 // Ruta para manejar la búsqueda de incidencias por ID
 router.post('/buscar', async (req, res) => {
-  const { id } = req.body; // Obtener el ID del formulario
+  const { id } = req.body;
 
   try {
-    // Buscar la incidencia en la base de datos
     const incidencia = await Incidencia.findOne({ where: { id: id } });
 
     if (incidencia) {
-      res.render('index', { incidencia }); // Renderiza la vista y pasa la incidencia encontrada
+      res.render('index', { incidencia, error: null });
     } else {
-      res.render('index', { error: 'No s\'ha trobat la incidència.' }); // Si no encuentra la incidencia
+      res.render('index', { incidencia: null, error: 'No s\'ha trobat la incidència.' });
     }
   } catch (error) {
     console.error(error);
-    res.render('index', { error: 'Error al buscar la incidència.' }); // Manejo de errores
+    res.render('index', { incidencia: null, error: 'Error al buscar la incidència.' });
   }
 });
 
@@ -59,7 +58,7 @@ router.post('/create', async (req, res) => {
     const { nom, departament_id, tipus, descripcio } = req.body;
 
     const dataCreacio = moment().tz('Europe/Madrid').toDate();
-    const estat_id = 1; // Suponiendo que "Pendent d'assignació" es ID 1
+    const estat_id = 1; // "Pendent d'assignació"
     const dataResolucio = null;
     const tecnic_id = null;
 
@@ -143,6 +142,5 @@ router.get('/:id/delete', async (req, res) => {
     res.status(500).send('Error al eliminar la incidencia: ' + error);
   }
 });
-
 
 module.exports = router;
