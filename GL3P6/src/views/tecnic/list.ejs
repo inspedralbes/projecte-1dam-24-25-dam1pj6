@@ -1,33 +1,137 @@
 <%- include('../partials/header', { title: 'Tecnic' }) %>
 
-<h1>Incidencias asignadas a <%= tecnic.nom %></h1>
+<style>
+  body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  h1 {
+    color: #90caf9;
+    text-align: center;
+    margin: 30px 0;
+  }
+
+  table {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  thead {
+    background-color: #2c2c2c;
+  }
+
+  .table th, .table td {
+    vertical-align: middle !important;
+    border-color: #444;
+  }
+
+  .table tbody tr:nth-child(odd) {
+    background-color: #2a2a2a;
+  }
+
+  ul {
+    padding-left: 20px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    border: none;
+    color: white;
+    font-weight: bold;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #0072ff, #00c6ff);
+    box-shadow: 0 0 10px #00c6ff90;
+  }
+
+  .btn-warning {
+    background-color: #fbc02d;
+    border: none;
+    color: #000;
+    font-weight: bold;
+  }
+
+  .btn-warning:hover {
+    background-color: #fdd835;
+    box-shadow: 0 0 10px #fbc02d80;
+  }
+
+  .btn-secondary {
+    background-color: #424242;
+    border: none;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background-color: #616161;
+    box-shadow: 0 0 10px #61616180;
+  }
+
+  .mt-3 {
+    margin-top: 1rem !important;
+  }
+
+  p {
+    margin: 1rem 0;
+  }
+</style>
+
+<h1>Incidències assignades a <%= tecnic.nom %></h1>
+
 <% if (incidencies.length === 0) { %>
-  <p>No tienes incidencias asignadas.</p>
+  <p class="text-center">No tens cap incidència assignada.</p>
+  <div class="text-center">
+    <a href="/tecnic/incidencies/noassignades?tecnic_id=<%= tecnic.id %>" class="btn btn-secondary mt-3">Veure incidències no assignades</a>
+  </div>
 <% } else { %>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Nom</th>
-        <th>Descripció</th>
-        <th>Data Creació</th>
-        <th>Estat</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% incidencies.forEach(incidencia => { %>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
         <tr>
-          <td><%= incidencia.nom %></td>
-          <td><%= incidencia.descripcio %></td>
-          <td><%= incidencia.datacreacio %></td>
-          <td><%= incidencia.estat.nom %></td>
-          <td>
-            <a href="/tecnic/incidencies/<%= incidencia.id %>/edit" class="btn btn-warning">Editar</a>
-          </td>
+          <th>Nom</th>
+          <th>Descripció</th>
+          <th>Data Creació</th>
+          <th>Estat</th>
+          <th>Actuacions</th>
+          <th>Acció</th>
         </tr>
-      <% }) %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% incidencies.forEach(incidencia => { %>
+          <tr>
+            <td><%= incidencia.nom %></td>
+            <td><%= incidencia.descripcio %></td>
+            <td><%= incidencia.datacreacio %></td>
+            <td><%= incidencia.estat.nom %></td>
+            <td>
+              <% if (incidencia.actuacions && incidencia.actuacions.length > 0) { %>
+                <ul>
+                  <% incidencia.actuacions.forEach(actuacio => { %>
+                    <li><%= actuacio.descripcio %> - <%= actuacio.data %></li>
+                  <% }) %>
+                </ul>
+              <% } else { %>
+                <p>No hi ha actuacions registrades.</p>
+              <% } %>
+            </td>
+            <td>
+              <a href="/tecnic/incidencies/<%= incidencia.id %>/actuacions/new" class="btn btn-primary mb-1">Afegir actuacions</a>
+              <a href="/tecnic/incidencies/<%= incidencia.id %>/edit" class="btn btn-warning">Editar</a>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center">
+    <a href="/tecnic/incidencies/noassignades?tecnic_id=<%= tecnic.id %>" class="btn btn-secondary mt-3">Veure incidències no assignades</a>
+  </div>
 <% } %>
 
 <%- include('../partials/footer') %>

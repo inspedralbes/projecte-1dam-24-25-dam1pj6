@@ -1,37 +1,112 @@
 <%- include('../partials/header', { title: 'Crear Incidència' }) %>
 
-<div class="container mt-5">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h3 class="card-title text-center">Crear Incidència</h3>
-      <form action="/incidencies/create" method="POST">
-        <div class="mb-3">
-          <label for="nom" class="form-label">Nom</label>
-          <input type="text" class="form-control" id="nom" name="nom" required>
-        </div>
+<style>
+  body {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
 
-        <div class="mb-3">
-          <label for="departament_id" class="form-label">Departament</label>
-          <select class="form-control" id="departament_id" name="departament_id" required>
-            <% departamentos.forEach(departamento => { %>
-              <option value="<%= departamento.id %>"><%= departamento.nom %></option> 
-            <% }) %>
-          </select>
-        </div>
+  .container {
+    max-width: 86%;
+    margin: 0px auto;
+  }
 
-        <div class="mb-3">
-          <label for="tipus" class="form-label">Tipus</label>
-          <input type="text" class="form-control" id="tipus" name="tipus" required>
-        </div>
+  .card {
+    background: linear-gradient(#424242);
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+    padding: 30px;
+    border: 1px solid #333;
+  }
 
-        <div class="mb-3">
-          <label for="descripcio" class="form-label">Descripció</label>
-          <textarea class="form-control" id="descripcio" name="descripcio" rows="4" required></textarea>
-        </div>
+  .card-title {
+    color: #90caf9;
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 25px;
+  }
 
-        <button type="submit" class="btn btn-primary w-100">Crear Incidència</button>
-      </form>
-    </div>
+  .form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #81d4fa;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    border: 1px solid #555;
+    background-color: #262626;
+    color: #f0f0f0;
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus {
+    background-color: #fff9f9;
+    border-color: #00bcd4;
+    outline: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    border: none;
+    padding: 12px;
+    width: 100%;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #0072ff, #00c6ff);
+    box-shadow: 0 0 10px #00c6ff90;
+  }
+
+  select.form-control option {
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
+</style>
+
+<div class="container">
+  <div class="card">
+    <h2 class="card-title">Crear Incidència</h2>
+    <form action="/incidencies/create" method="POST">
+      <div>
+        <label for="nom" class="form-label">Nom</label>
+        <input type="text" class="form-control" id="nom" name="nom" required>
+      </div>
+
+      <div>
+        <label for="departament_id" class="form-label">Departament</label>
+        <select class="form-control" id="departament_id" name="departament_id" required>
+          <% departamentos.forEach(departamento => { %>
+            <option value="<%= departamento.id %>"><%= departamento.nom %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div>
+        <label for="tipus" class="form-label">Tipus</label>
+        <input type="text" class="form-control" id="tipus" name="tipus" required>
+      </div>
+
+      <div>
+        <label for="descripcio" class="form-label">Descripció</label>
+        <textarea class="form-control" id="descripcio" name="descripcio" rows="4" required></textarea>
+      </div>
+
+      <button type="submit" class="btn-primary">Crear Incidència</button>
+    </form>
   </div>
 </div>
 
