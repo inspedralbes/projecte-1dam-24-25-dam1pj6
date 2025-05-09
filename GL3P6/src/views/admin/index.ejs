@@ -1,12 +1,17 @@
-<%- include('../partials/header', { title: 'Panell d\'Administració' }) %>
+<%- include('../partials/header', { title: "Administració d'Incidències" }) %>
 
-<div class="container mt-5">
-  <div class="card shadow">
-    <div class="card-body">
-      <h3 class="card-title text-center mb-4">Administració d'Incidències</h3>
-      <table class="table table-striped">
-        <thead>
-          <tr>
+<!-- Bootstrap Icons CDN -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<div class="container mt-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0">Administració d'Incidències</h4>
+    </div>
+    <div class="card-body p-0">
+      <table class="table table-bordered table-hover mb-0 align-middle">
+        <thead class="table-light">
+          <tr class="text-center">
             <th>ID</th>
             <th>Nom</th>
             <th>Departament</th>
@@ -14,25 +19,35 @@
             <th>Data Creació</th>
             <th>Tècnic</th>
             <th>Estat</th>
-            <th>Data resolució</th>
+            <th>Prioritat</th>
+            <th>Data Resolució</th>
             <th>Accions</th>
           </tr>
         </thead>
         <tbody>
           <% incidencies.forEach(incidencia => { %>
             <tr>
-              <td><%= incidencia.id %></td>
+              <td class="text-center"><%= incidencia.id %></td>
               <td><%= incidencia.nom %></td>
-              <td><%= incidencia.departament ? incidencia.departament.nom : 'N/A' %></td>
+              <td><%= incidencia.departament?.nom %></td>
               <td><%= incidencia.tipus %></td>
               <td><%= incidencia.datacreacio %></td>
-              <td><%= incidencia.tecnic ? incidencia.tecnic.nom: 'N/A' %></td>
-              <td><%= incidencia.estat ? incidencia.estat.nom : 'N/A' %></td>
-              <td><%= incidencia.dataresolucio %></td>
-              <td>
-                <a href="/admin/<%= incidencia.id %>/edit" class="btn btn-sm btn-warning">Editar</a>
-                <a href="/admin/<%= incidencia.id %>/delete" class="btn btn-danger btn-sm">Eliminar</a>
-                <a href="/admin/<%= incidencia.id %>/actuacions" class="btn btn-info btn-sm">Veure Actuacions</a>
+              <td><%= incidencia.tecnic?.nom || '—' %></td>
+              <td><%= incidencia.estat?.nom %></td>
+              <td><%= incidencia.prioritat?.nom || '—' %></td>
+              <td><%= incidencia.dataresolucio || '—' %></td>
+              <td class="text-center">
+                <div class="btn-group btn-group-sm" role="group">
+                  <a href="/admin/<%= incidencia.id %>/edit" class="btn btn-outline-warning" title="Editar">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                  <a href="/admin/<%= incidencia.id %>/delete" class="btn btn-outline-danger" title="Eliminar" onclick="return confirm('Estàs segur que vols eliminar aquesta incidència?')">
+                    <i class="bi bi-trash"></i>
+                  </a>
+                  <a href="/admin/<%= incidencia.id %>/actuacions" class="btn btn-outline-info" title="Veure Actuacions">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                </div>
               </td>
             </tr>
           <% }) %>

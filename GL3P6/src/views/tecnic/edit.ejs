@@ -1,4 +1,4 @@
-<h1>Editar Incidencia</h1>
+<h1>Editar Incidència</h1>
 
 <form action="/tecnic/incidencies/<%= incidencia.id %>/update" method="POST">
   <div class="form-group">
@@ -12,7 +12,16 @@
 
   <div class="form-group">
     <label for="dataresolucio">Data de Resolució</label>
-    <input type="datetime-local" class="form-control" id="dataresolucio" name="dataresolucio" value="<%= incidencia.dataresolucio ? incidencia.dataresolucio : '' %>">
+    <input type="datetime-local" class="form-control" id="dataresolucio" name="dataresolucio" value="<%= incidencia.dataresolucio ? incidencia.dataresolucio.toISOString().slice(0, 16) : '' %>">
+  </div>
+
+  <div class="form-group">
+    <label for="prioritat_id">Prioritat</label>
+    <select class="form-control" id="prioritat_id" name="prioritat_id">
+      <% prioritats.forEach(p => { %>
+        <option value="<%= p.id %>" <%= p.id === incidencia.prioritat_id ? 'selected' : '' %>><%= p.nom %></option>
+      <% }) %>
+    </select>
   </div>
 
   <div class="form-group">

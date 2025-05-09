@@ -5,9 +5,10 @@ const app = express();
 const incidenciaRoutes = require('./routes/incidencies.routes');
 const admin = require('./routes/admin.routes');
 const tecnic = require('./routes/tecnic.routes');
-const Estat = require('./models/estat'); // O ajusta la ruta según corresponda
-const Departamento = require('./models/departament'); // Asegúrate también de importar Departamento
+const Estat = require('./models/estat'); 
+const Departamento = require('./models/departament'); 
 const Tecnic = require('./models/tecnic');
+const Prioritat = require('./models/prioritat');
 
 // Configurar EJS como motor de plantillas
 app.set('view engine', 'ejs');
@@ -76,6 +77,22 @@ sequelize.sync({ force: false })
     }    
     
     console.log('Técnicos iniciales verificados o creados');
+
+    const prioritats = [
+      { nom: 'Alta' },
+      { nom: 'Mitjana' },
+      { nom: 'Baixa' }
+    ];
+
+    for (const prioritat of prioritats) {
+      await Prioritat.findOrCreate({
+        where: { nom: prioritat.nom },
+        defaults: { nom: prioritat.nom }
+      });
+}
+
+console.log('Prioritats inicials verificades o creades');
+
 
     // Iniciar el servidor
     const port = process.env.PORT || 3000;

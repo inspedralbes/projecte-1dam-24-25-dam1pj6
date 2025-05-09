@@ -5,6 +5,7 @@ const Departament = require('./departament');
 const Estat = require('./estat');  
 const Tecnic = require('./tecnic');
 const Actuacio = require('./actuacio'); 
+const Prioritat = require('./prioritat');
 
 const Incidencia = sequelize.define('Incidencia', {
   id: {
@@ -33,7 +34,7 @@ const Incidencia = sequelize.define('Incidencia', {
     allowNull: false,
   },
   datacreacio: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     defaultValue: DataTypes.NOW, 
   },
   estat_id: {
@@ -53,7 +54,7 @@ const Incidencia = sequelize.define('Incidencia', {
     allowNull: true,
   },
   dataresolucio: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: true,
   },
 }, {
@@ -79,6 +80,9 @@ Actuacio.belongsTo(Incidencia, {
   foreignKey: 'incidencia_id',
   as: 'incidencia'
 });
-
+Incidencia.belongsTo(Prioritat, { 
+  foreignKey: 'prioritat_id', 
+  as: 'prioritat' 
+});
 
 module.exports = Incidencia;

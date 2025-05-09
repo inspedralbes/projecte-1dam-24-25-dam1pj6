@@ -5,6 +5,7 @@ const Departamento = require('../models/departament');
 const Estat = require('../models/estat'); 
 const Tecnic = require('../models/tecnic');
 const Actuacio = require('../models/actuacio');
+const Prioritat = require('../models/prioritat');
 
 // Mostrar listado de incidencias
 router.get('/', async (req, res) => {
@@ -13,7 +14,8 @@ router.get('/', async (req, res) => {
       include: [
         { model: Departamento, as: 'departament' },
         { model: Estat, as: 'estat' },
-        { model: Tecnic, as: 'tecnic' }  
+        { model: Tecnic, as: 'tecnic' }, 
+        { model: Prioritat, as: 'prioritat' } 
       ]
     });
 
@@ -35,16 +37,18 @@ router.get('/:id/edit', async (req, res) => {
     const departamentos = await Departamento.findAll();
     const estats = await Estat.findAll();
     const tecnics = await Tecnic.findAll();  
+    const prioritats = await Prioritat.findAll();  // Cambio aquí: 'prioritats' en lugar de 'prioritat'
 
     res.render('admin/edit', {
       incidencia,
       departamentos,
       estats,
-      tecnics   
+      tecnics,
+      prioritats  // Y pasamos 'prioritats' a la vista
     });
   } catch (error) {
     console.error('Error al cargar la incidencia:', error);
-    res.status(500).send('Error al cargar la incidencia');
+    res.status(500).send('Error al cargar la incidencia ' + error);
   }
 });
 

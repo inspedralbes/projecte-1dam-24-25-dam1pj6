@@ -43,6 +43,16 @@
         </div>
 
         <div class="mb-3">
+          <label for="prioritat_id" class="form-label">Prioritat</label>
+          <select class="form-control" id="prioritat_id" name="prioritat_id">
+              <% prioritats.forEach(p => { %>
+                <option value="<%= p.id %>" <%= p.id === incidencia.prioritat_id ? 'selected' : '' %>><%= p.nom %></option>
+              <% }) %>
+            </select>
+        </div>
+
+
+        <div class="mb-3">
           <label for="tecnic_id" class="form-label">Assignació de tècnic</label>
           <select class="form-control" id="tecnic_id" name="tecnic_id" required>
             <% tecnics.forEach(tecnic => { %>

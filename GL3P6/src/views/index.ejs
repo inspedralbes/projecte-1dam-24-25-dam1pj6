@@ -15,6 +15,22 @@
   <p><strong>Departament:</strong> <%= incidencia.departament ? incidencia.departament.nom : 'Desconegut' %></p>
   <p><strong>Descripció:</strong> <%= incidencia.descripcio %></p>
   <p><strong>Estat:</strong> <%= incidencia.estat ? incidencia.estat.nom : 'Desconegut' %></p>
+  <p><strong>Actuacions visibles per l’usuari:</strong></p>
+  <ul>
+    <% 
+      const visibles = incidencia.actuacions?.filter(a => a.visible_per_usuari);
+      if (visibles && visibles.length > 0) { 
+        visibles.forEach(actuacio => { 
+    %>
+      <li><%= actuacio.descripcio %></li>
+    <% 
+        }) 
+      } else { 
+    %>
+      <li>Cap actuació visible</li>
+    <% } %>
+  </ul>
+
 <% } else if (error) { %>
   <p><%= error %></p>
 <% } %>

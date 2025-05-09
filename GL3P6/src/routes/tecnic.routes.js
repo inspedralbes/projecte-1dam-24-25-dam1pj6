@@ -4,6 +4,7 @@ const Tecnic = require('../models/tecnic');
 const Incidencia = require('../models/incidencia');
 const Estat = require('../models/estat');
 const Actuacio = require('../models/actuacio');
+const Prioritat = require('../models/prioritat');
 
 
 // Mostrar página principal para seleccionar técnico
@@ -63,6 +64,7 @@ router.get('/incidencies/noassignades', async (req, res) => {
     res.status(500).send('Error al carregar les incidències no assignades');
   }
 });
+
 // Assignar incidències seleccionades al tècnic
 router.post('/incidencies/assignar', async (req, res) => {
   try {
@@ -73,9 +75,12 @@ router.post('/incidencies/assignar', async (req, res) => {
     }
     const ids = Array.isArray(incidencies_ids) ? incidencies_ids : [incidencies_ids];
 
+
+    const estatEnProces = await Estat.findOne({ where: { nom: 'En procés' } });
+
     await Promise.all(ids.map(id =>
       Incidencia.update(
-        { tecnic_id: tecnic_id },
+        { tecnic_id: tecnic_id, estat_id: estatEnProces.id }, 
         { where: { id } }
       )
     ));
@@ -93,7 +98,8 @@ router.get('/incidencies/:id/edit', async (req, res) => {
     const incidenciaId = req.params.id;
     const incidencia = await Incidencia.findByPk(incidenciaId, {
       include: [
-        { model: Estat, as: 'estat' }
+        { model: Estat, as: 'estat' },
+        { model: Prioritat, as: 'prioritat' }
       ]
     });
 
@@ -101,19 +107,16 @@ router.get('/incidencies/:id/edit', async (req, res) => {
       return res.status(404).send('Incidència no trobada');
     }
 
-    // Si es necesario cargar departamentos, importarlos previamente
-    const Departament = require('../models/departament');  // Asegúrate de que este modelo existe
+    const Departament = require('../models/departament');  
     const departamentos = await Departament.findAll();
+    const prioritats = await Prioritat.findAll();
 
-    res.render('incidencies/edit', { incidencia, departamentos });
+    res.render('incidencies/edit', { incidencia, departamentos, prioritats});
   } catch (error) {
     console.error('Error al cargar la incidencia:', error);
-    res.status(500).send('Error al cargar la incidencia');
+    res.status(500).send('Error al cargar la incidencia ' + error);
   }
 });
-
-
-
 
 // Actualizar incidencia
 router.post('/incidencies/:id/update', async (req, res) => {
@@ -128,17 +131,19 @@ router.post('/incidencies/:id/update', async (req, res) => {
     incidencia.estat_id = estat_id;
     incidencia.dataresolucio = dataresolucio || null;
     incidencia.acceptat = acceptat === 'on';  // checkbox enviado como 'on' cuando está marcado
+    incidencia.prioritat_id = prioritat_id || null;
 
     await incidencia.save();
 
     console.log('Incidencia actualizada:', incidencia);
-    res.redirect(`/tecnic/incidencies?tecnic_id=${incidencia.tecnic_id}`);  // Redirige a la lista de incidencias
+    res.redirect(`/tecnic/incidencies?tecnic_id=${incidencia.tecnic_id}`);  
   } catch (error) {
     console.error('Error al actualizar la incidencia:', error);
     res.status(500).send('Error al actualizar la incidencia');
   }
 });
 
+//ACTUACIONS
 
 // Mostrar actuacions de una incidència
 router.get('/incidencies/:id/actuacions', async (req, res) => {
@@ -153,14 +158,16 @@ router.get('/incidencies/:id/actuacions', async (req, res) => {
     if (!incidencia) {
       return res.status(404).send('Incidència no trobada');
     }
+    const actuacionsVisibles = incidencia.actuacions;
 
-    res.render('actuacions/list', { actuacions: incidencia.actuacions, incidencia });
+    res.render('actuacions/list', { actuacions: actuacionsVisibles, incidencia });
   } catch (error) {
     console.error('Error al cargar les actuacions:', error);
     res.status(500).send('Error al carregar les actuacions');
   }
 });
-// Mostrar formulari para afegir una nova actuació
+
+// Mostrar formulario para afegir una nova actuació
 router.get('/incidencies/:id/actuacions/new', async (req, res) => {
   try {
     const incidenciaId = req.params.id;
@@ -179,15 +186,18 @@ router.get('/incidencies/:id/actuacions/new', async (req, res) => {
 // Crear una nueva actuació
 router.post('/incidencies/:id/actuacions/create', async (req, res) => {
   try {
-    const { descripcio, temps_invertit, visible, resolta } = req.body;
+    const { descripcio, temps_invertit, visible_per_usuari, resolt } = req.body;
+
     const incidenciaId = req.params.id;
+    const visible = visible_per_usuari === 'true' || visible_per_usuari === true;
+    const resolta = resolt === 'true' || resolt === true;
 
     const actuacio = await Actuacio.create({
       data: new Date(),
       descripcio,
       temps_invertit,
-      visible,
-      resolta,
+      visible_per_usuari: visible,
+      resolt: resolta, 
       incidencia_id: incidenciaId,
     });
 
@@ -195,9 +205,8 @@ router.post('/incidencies/:id/actuacions/create', async (req, res) => {
     res.redirect(`/tecnic/incidencies/${incidenciaId}/actuacions`);
   } catch (error) {
     console.error('Error al crear la actuació:', error);
-    res.status(500).send('Error al crear la actuació' + error);
+    res.status(500).send('Error al crear la actuació');
   }
 });
-
 
 module.exports = router;

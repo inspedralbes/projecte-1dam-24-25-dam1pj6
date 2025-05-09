@@ -9,7 +9,7 @@ const Actuacio = sequelize.define('Actuacio', {
     autoIncrement: true,
   },
   data: {
-    type: DataTypes.DATE,
+    type: DataTypes.DATEONLY,
     allowNull: false,
   },
   descripcio: {

@@ -1,35 +1,43 @@
 <%- include('../partials/header', { title: 'Crear Incidència' }) %>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
 <div class="container mt-5">
-  <div class="card shadow-sm">
-    <div class="card-body">
-      <h3 class="card-title text-center">Crear Incidència</h3>
-      <form action="/incidencies/create" method="POST">
+  <div class="card shadow-sm border-0 rounded-4">
+    <div class="card-body p-4">
+      <h3 class="text-center mb-4">
+        <i class="bi bi-bug-fill text-primary me-2"></i>Crear Nova Incidència
+      </h3>
+
+      <form action="/incidencies/create" method="POST" class="needs-validation" novalidate>
         <div class="mb-3">
-          <label for="nom" class="form-label">Nom</label>
-          <input type="text" class="form-control" id="nom" name="nom" required>
+          <label for="nom" class="form-label fw-semibold">Nom</label>
+          <input type="text" class="form-control" id="nom" name="nom" placeholder="Ex: Impressora no funciona" required>
         </div>
 
         <div class="mb-3">
-          <label for="departament_id" class="form-label">Departament</label>
-          <select class="form-control" id="departament_id" name="departament_id" required>
+          <label for="departament_id" class="form-label fw-semibold">Departament</label>
+          <select class="form-select" id="departament_id" name="departament_id" required>
+            <option selected disabled value="">Selecciona un departament</option>
             <% departamentos.forEach(departamento => { %>
-              <option value="<%= departamento.id %>"><%= departamento.nom %></option> 
+              <option value="<%= departamento.id %>"><%= departamento.nom %></option>
             <% }) %>
           </select>
         </div>
 
         <div class="mb-3">
-          <label for="tipus" class="form-label">Tipus</label>
-          <input type="text" class="form-control" id="tipus" name="tipus" required>
+          <label for="tipus" class="form-label fw-semibold">Tipus</label>
+          <input type="text" class="form-control" id="tipus" name="tipus" placeholder="Ex: Hardware, Programari..." required>
         </div>
 
         <div class="mb-3">
-          <label for="descripcio" class="form-label">Descripció</label>
-          <textarea class="form-control" id="descripcio" name="descripcio" rows="4" required></textarea>
+          <label for="descripcio" class="form-label fw-semibold">Descripció</label>
+          <textarea class="form-control" id="descripcio" name="descripcio" rows="4" placeholder="Explica breument el problema" required></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">Crear Incidència</button>
+        <button type="submit" class="btn btn-outline-primary w-100">
+          <i class="bi bi-check-circle me-1"></i> Crear Incidència
+        </button>
       </form>
     </div>
   </div>
