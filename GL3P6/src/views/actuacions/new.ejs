@@ -1,29 +1,42 @@
 <%- include('../partials/header', { title: 'Nova Actuació' }) %>
 
-<h1>Afegir nova actuació a la Incidència: <%= incidencia.nom %></h1>
+<div class="mb-4">
+<a href="javascript:history.back()" class="btn btn-outline-dark rounded-pill shadow-sm">
+  <i class="bi bi-chevron-left me-2"></i> Tornar enrere
+</a>
+
+</div>
+
+<h1 class="text-center mb-5" style="font-family: 'Roboto', sans-serif; font-weight: 600; color: #333;">Afegir nova actuació a la Incidència: <%= incidencia.nom %></h1>
 
 <form action="/tecnic/incidencies/<%= incidencia.id %>/actuacions/create" method="POST">
-  <div class="form-group">
-    <label for="descripcio">Descripció:</label>
-    <input type="text" name="descripcio" id="descripcio" class="form-control" required>
-  </div>
+  <div class="card shadow-lg border-0 rounded-4">
+    <div class="card-body px-5 py-4">
+      <div class="form-group mb-4">
+        <label for="descripcio" class="form-label text-muted">Descripció de l'actuació</label>
+        <input type="text" name="descripcio" id="descripcio" class="form-control form-control-lg border-0 shadow-sm" placeholder="Descripció breu de l'actuació" required>
+      </div>
 
-  <div class="form-group">
-    <label for="temps_invertit">Temps invertit (minuts):</label>
-    <input type="number" name="temps_invertit" id="temps_invertit" class="form-control" required>
-  </div>
+      <div class="form-group mb-4">
+        <label for="temps_invertit" class="form-label text-muted">Temps invertit (minuts)</label>
+        <input type="number" name="temps_invertit" id="temps_invertit" class="form-control form-control-lg border-0 shadow-sm" placeholder="Temps en minuts" required>
+      </div>
 
-  <div class="form-group">
-    <label for="visible_per_usuari">Visible per l'usuari:</label>
-    <input type="checkbox" name="visible_per_usuari" id="visible_per_usuari" value="true" />
-  </div>
+      <div class="form-group mb-4">
+        <label for="visible_per_usuari" class="form-label text-muted">Visible per a l'usuari</label>
+        <div class="form-check form-switch">
+          <input type="checkbox" class="form-check-input shadow-sm" id="visible_per_usuari" name="visible_per_usuari" value="true">
+          <label class="form-check-label" for="visible_per_usuari">Activar visibilitat</label>
+        </div>
+      </div>
 
-  <div class="form-group">
-    <label for="resolt">Resolta:</label>
-    <input type="checkbox" name="resolt" id="resolt" value="true" />
+      <div class="form-group text-center">
+        <button type="submit" class="btn btn-primary btn-lg rounded-pill px-5 py-3 shadow-lg">
+          Afegir actuació
+        </button>
+      </div>
+    </div>
   </div>
-
-  <button type="submit" class="btn btn-primary">Afegir actuació</button>
 </form>
 
 <%- include('../partials/footer') %>

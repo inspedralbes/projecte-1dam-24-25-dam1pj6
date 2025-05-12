@@ -1,0 +1,41 @@
+<%- include('../partials/header', { title: 'Incidències resoltes' }) %>
+
+<div class="container mt-5">
+  <h1 class="mb-4 text-dark">Incidències resoltes</h1>
+
+  <% if (resoltes.length === 0) { %>
+    <div class="alert alert-danger text-center">
+      <strong>No s'han resolt incidències encara!</strong> Si tens dubtes, contacta amb el teu tècnic.
+    </div>
+  <% } else { %>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <% resoltes.forEach(incidencia => { %>
+        <div class="col">
+          <div class="card shadow-lg rounded-3 border-0 hover-scale">
+            <div class="card-body">
+              <h5 class="card-title text-dark"><%= incidencia.nom %></h5>
+              <p class="card-text text-muted"><%= incidencia.descripcio %></p>
+              <p>
+                <span class="badge bg-secondary"><%= incidencia.departament?.nom || '—' %></span>
+                <span class="badge bg-warning text-dark"><%= incidencia.prioritat?.nom || '—' %></span>
+              </p>
+            </div>
+            <div class="card-footer text-muted d-flex justify-content-between align-items-center">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-calendar-check me-2"></i>
+                <span><%= new Date(incidencia.dataresolucio).toLocaleDateString('es-ES') %></span>
+              </div>
+              <form action="/tecnic/incidencies/<%= incidencia.id %>/delete" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="bi bi-trash me-2"></i> Eliminar
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

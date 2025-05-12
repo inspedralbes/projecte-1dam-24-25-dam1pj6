@@ -1,38 +1,52 @@
-<%- include('partials/header', { title: 'Projecte incidències' }) %>
+<%- include('partials/header', { title: 'Projecte Incidències' }) %>
 
-<h1>Benvingut al projecte Incidències!</h1>
-<p>Aquesta és la pàgina d’inici, renderitzada amb EJS.</p>
+<div class="container py-5">
+  <h1 class="mb-4 text-dark">Benvingut al projecte <span class="fw-bold">Incidències</span></h1>
 
-<h3>Estat d'una incidència</h3>
-<form action="/incidencies/buscar" method="post">
-  <input type="text" name="id" placeholder="Cerca per ID" required>
-  <button type="submit">Cerca</button>
-</form>
+  <hr class="my-4">
 
-<% if (incidencia) { %>
-  <h2>Resultat de la cerca</h2>
-  <p><strong>ID:</strong> <%= incidencia.id %></p>
-  <p><strong>Departament:</strong> <%= incidencia.departament ? incidencia.departament.nom : 'Desconegut' %></p>
-  <p><strong>Descripció:</strong> <%= incidencia.descripcio %></p>
-  <p><strong>Estat:</strong> <%= incidencia.estat ? incidencia.estat.nom : 'Desconegut' %></p>
-  <p><strong>Actuacions visibles per l’usuari:</strong></p>
-  <ul>
-    <% 
-      const visibles = incidencia.actuacions?.filter(a => a.visible_per_usuari);
-      if (visibles && visibles.length > 0) { 
-        visibles.forEach(actuacio => { 
-    %>
-      <li><%= actuacio.descripcio %></li>
-    <% 
-        }) 
-      } else { 
-    %>
-      <li>Cap actuació visible</li>
-    <% } %>
-  </ul>
+  <h3 class="mb-3">Consulta l’estat d’una incidència</h3>
 
-<% } else if (error) { %>
-  <p><%= error %></p>
-<% } %>
+  <form action="/incidencies/buscar" method="post" class="row g-3 mb-4">
+    <div class="col-auto">
+      <input type="text" name="id" class="form-control" placeholder="Cerca per ID" required>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-dark">Cerca</button>
+    </div>
+  </form>
+
+  <% if (incidencia) { %>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Resultat de la cerca</h5>
+        <p><strong>ID:</strong> <%= incidencia.id %></p>
+        <p><strong>Departament:</strong> <%= incidencia.departament ? incidencia.departament.nom : 'Desconegut' %></p>
+        <p><strong>Descripció:</strong> <%= incidencia.descripcio %></p>
+        <p><strong>Estat:</strong> <span class="badge bg-secondary"><%= incidencia.estat ? incidencia.estat.nom : 'Desconegut' %></span></p>
+
+        <h6 class="mt-4">Actuacions visibles per l’usuari:</h6>
+        <ul class="list-group mt-2">
+          <% 
+
+            const visibles = (incidencia.actuacions || []).filter(a => a.visible_per_usuari === true || a.visible_per_usuari === 'true');
+            if (visibles && visibles.length > 0) { 
+              visibles.forEach(actuacio => { 
+          %>
+            <li class="list-group-item">
+              <i class="bi bi-check-circle text-success me-2"></i><%= actuacio.descripcio %>
+            </li>
+          <% }) 
+            } else { 
+          %>
+            <li class="list-group-item text-muted fst-italic">Cap actuació visible</li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  <% } else if (error) { %>
+    <div class="alert alert-danger mt-4"><%= error %></div>
+  <% } %>
+</div>
 
 <%- include('partials/footer') %>

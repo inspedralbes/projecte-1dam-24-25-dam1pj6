@@ -7,6 +7,7 @@ const Tecnic = require('../models/tecnic');
 const Actuacio = require('../models/actuacio');
 const Prioritat = require('../models/prioritat');
 
+
 // Mostrar listado de incidencias
 router.get('/', async (req, res) => {
   try {

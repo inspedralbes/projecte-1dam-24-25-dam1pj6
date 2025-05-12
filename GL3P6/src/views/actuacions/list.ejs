@@ -1,31 +1,48 @@
 <%- include('../partials/header', { title: 'Actuacions de la Incidència' }) %>
 
-<h1>Actuacions de la Incidència: <%= incidencia.nom %></h1>
+<div class="container py-5">
+  <h1 class="text-center mb-5 text-dark">
+    Actuacions de la Incidència: <%= incidencia.nom %>
+  </h1>
 
-<% if (actuacions.length === 0) { %>
-  <p>No hi ha actuacions registrades per aquesta incidència.</p>
-<% } else { %>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Descripció</th>
-        <th>Temps Invertit (min)</th>
-        <th>Visible</th>
-        <th>Resolta</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% actuacions.forEach(actuacio => { %>
-        <tr>
-          <td><%= actuacio.descripcio %></td>
-          <td><%= actuacio.temps_invertit %></td>
-          <td><%= actuacio.visible ? 'Sí' : 'No' %></td>
-          <td><%= actuacio.resolta ? 'Sí' : 'No' %></td>
-        </tr>
-      <% }) %>
-    </tbody>
-  </table>
-<% } %>
+  <% if (actuacions.length === 0) { %>
+    <div class="alert alert-secondary text-center" role="alert">
+      No hi ha actuacions registrades per aquesta incidència.
+    </div>
+  <% } else { %>
+    <div class="table-responsive">
+      <table class="table table-hover shadow-sm">
+        <thead class="thead-light border-bottom">
+          <tr class="text-uppercase small text-muted">
+            <th class="pl-3">Descripció</th>
+            <th>Temps Invertit (min)</th>
+            <th>Data</th>
+            <th class="text-center">Visible per l'Usuari</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% actuacions.forEach(actuacio => { %>
+            <tr class="align-middle border-bottom <%= actuacio.visible_per_usuari ? 'table-light' : 'table-secondary' %>">
+              <td class="pl-3"><%= actuacio.descripcio %></td>
+              <td><%= actuacio.temps_invertit %></td>
+              <td><%= new Date(actuacio.data).toLocaleDateString('ca-ES') %></td>
+              <td class="text-center">
+                <span class="badge <%= actuacio.visible_per_usuari ? 'bg-success' : 'bg-dark' %>">
+                  <%= actuacio.visible_per_usuari ? 'Visible' : 'No Visible' %>
+                </span>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
 
+  <div class="text-center mt-5">
+    <a href="javascript:history.back()" class="btn btn-outline-dark btn-sm px-4 py-2 rounded-pill">
+      <i class="bi bi-arrow-left me-2"></i> Tornar enrere
+    </a>
+  </div>
+</div>
 
 <%- include('../partials/footer') %>

@@ -5,29 +5,38 @@ const Departamento = require('../models/departament');
 const Estat = require('../models/estat');
 const Tecnic = require('../models/tecnic');
 const moment = require('moment-timezone');
+const Actuacio = require('../models/actuacio');
+const Prioritat = require('../models/prioritat');
 
 router.post('/buscar', async (req, res) => {
   const { id } = req.body;
+
   if (!id || id.trim() === '') {
     return res.render('index', { error: 'Has d’introduir una ID.', incidencia: null });
   }
+
   try {
     const incidencia = await Incidencia.findOne({
       where: { id: id },
       include: [
         { model: Departamento, as: 'departament' },
-        { model: Estat, as: 'estat' }
+        { model: Estat, as: 'estat' },
+        { model: Actuacio, as: 'actuacions' }  
       ]
     });
 
     if (incidencia) {
-      res.render('index', { incidencia, error: null });
+      incidencia.actuacions = incidencia.actuacions.filter(
+        a => a.visible_per_usuari === true || a.visible_per_usuari === 1 || a.visible_per_usuari === 'true'
+      );
+
+      return res.render('index', { incidencia, error: null });
     } else {
-      res.render('index', { error: 'No s\'ha trobat la incidència.', incidencia: null });
+      return res.render('index', { error: 'No s\'ha trobat la incidència.', incidencia: null });
     }
   } catch (error) {
     console.error(error);
-    res.render('index', { error: 'Error al buscar la incidència.', incidencia: null });
+    return res.render('index', { error: 'Error al buscar la incidència.', incidencia: null });
   }
 });
 
@@ -35,19 +44,30 @@ router.post('/buscar', async (req, res) => {
 // Listado de incidencias
 router.get('/', async (req, res) => {
   try {
+    const sortField = req.query.sort || 'id';
+    const sortOrder = req.query.order === 'DESC' ? 'DESC' : 'ASC';
+
     const incidencies = await Incidencia.findAll({
       include: [
         { model: Departamento, as: 'departament' },
         { model: Estat, as: 'estat' },
-        { model: Tecnic, as: 'tecnic' }
-      ]
+        { model: Tecnic, as: 'tecnic' },
+        { model: Prioritat, as: 'prioritat' } 
+      ],
+      order: [[sortField, sortOrder]]
     });
-    res.render('incidencies/list', { incidencies });
+
+    res.render('incidencies/list', {
+      incidencies,
+      sortField,
+      sortOrder
+    });
   } catch (error) {
     console.error('Error al obtener incidencias:', error);
     res.status(500).send('Error al obtener incidencias');
   }
 });
+
 
 // Mostrar formulario para crear nueva incidencia
 router.get('/new', async (req, res) => {
@@ -104,7 +124,8 @@ router.get('/:id/edit', async (req, res) => {
     }
 
     const departamentos = await Departamento.findAll();
-    res.render('incidencies/edit', { incidencia, departamentos });
+    const estat = await Estat.findAll();
+    res.render('incidencies/edit', { incidencia, departamentos, estat });
   } catch (error) {
     console.error('Error al cargar la incidencia:', error);
     res.status(500).send('Error al cargar la incidencia para editar');
@@ -114,7 +135,7 @@ router.get('/:id/edit', async (req, res) => {
 // Actualizar incidencia
 router.post('/:id/update', async (req, res) => {
   try {
-    const { nom, departament_id, tipus, descripcio } = req.body;
+    const { nom, departament_id, tipus, descripcio, estat } = req.body;
     const incidencia = await Incidencia.findByPk(req.params.id);
 
     if (!incidencia) {
@@ -125,6 +146,7 @@ router.post('/:id/update', async (req, res) => {
     incidencia.departament_id = departament_id;
     incidencia.tipus = tipus;
     incidencia.descripcio = descripcio;
+    incidencia.estat = estat;
 
     await incidencia.save();
 

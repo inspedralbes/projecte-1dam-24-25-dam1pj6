@@ -17,17 +17,43 @@
         </div>
       <% } else { %>
         <table class="table table-bordered table-hover align-middle mb-0">
-          <thead class="table-light text-center">
-            <tr>
-              <th>Nom</th>
-              <th>Descripció</th>
-              <th>Data Creació</th>
-              <th>Estat</th>
-              <th>Actuacions</th>
-              <th>Prioritat</th>
-              <th>Accions</th>
-            </tr>
-          </thead>
+    <style>
+      .sortable {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+
+    <thead class="table-light text-center">
+      <tr>
+        <th>Nom</th>
+        <th>Descripció</th>
+        
+        <th>
+          <a class="sortable" href="?tecnic_id=<%= tecnic.id %>&sort=datacreacio&order=<%= sortField === 'datacreacio' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>">
+            Data Creació
+            <% if (sortField === 'datacreacio') { %>
+              <i class="bi <%= sortOrder === 'ASC' ? 'bi-arrow-up' : 'bi-arrow-down' %>"></i>
+            <% } %>
+          </a>
+        </th>
+        
+        <th>Estat</th>
+        <th>Actuacions</th>
+        
+        <th>
+          <a class="sortable" href="?tecnic_id=<%= tecnic.id %>&sort=prioritat_id&order=<%= sortField === 'prioritat_id' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>">
+            Prioritat
+            <% if (sortField === 'prioritat_id') { %>
+              <i class="bi <%= sortOrder === 'ASC' ? 'bi-arrow-up' : 'bi-arrow-down' %>"></i>
+            <% } %>
+          </a>
+        </th>
+        <th>Data Resolució</th>
+        <th>Accions</th>
+      
+      </tr>
+    </thead>
           <tbody>
             <% incidencies.forEach(incidencia => { %>
               <tr>
@@ -39,7 +65,7 @@
                   <% if (incidencia.actuacions && incidencia.actuacions.length > 0) { %>
                     <ul class="mb-0 ps-3">
                       <% incidencia.actuacions.forEach(actuacio => { %>
-                        <li><%= actuacio.descripcio %> - <%= actuacio.data %></li>
+                        <li><%= actuacio.descripcio %>.  Data: <%= actuacio.data %></li>
                       <% }) %>
                     </ul>
                   <% } else { %>
@@ -47,6 +73,7 @@
                   <% } %>
                 </td>
                 <td><%= incidencia.prioritat ? incidencia.prioritat.nom : '—' %></td>
+                <td><%= incidencia.dataresolucio || '—' %></td>
                 <td class="text-center">
                   <div class="btn-group btn-group-sm" role="group">
                     <a href="/tecnic/incidencies/<%= incidencia.id %>/actuacions" class="btn btn-outline-secondary" title="Veure actuacions">
@@ -55,9 +82,11 @@
                     <a href="/tecnic/incidencies/<%= incidencia.id %>/actuacions/new" class="btn btn-outline-primary" title="Afegir actuació">
                       <i class="bi bi-plus-circle"></i>
                     </a>
-                    <a href="/tecnic/incidencies/<%= incidencia.id %>/edit" class="btn btn-outline-warning" title="Editar">
+                    
+                   <a href="/tecnic/incidencies/<%= incidencia.id %>/edit" class="btn btn-outline-warning" title="Editar">
                       <i class="bi bi-pencil-square"></i>
-                    </a>
+                   </a>
+                   
                   </div>
                 </td>
               </tr>
