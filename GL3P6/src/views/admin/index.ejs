@@ -38,17 +38,17 @@
               <td><%= incidencia.prioritat?.nom || '—' %></td>
               <td><%= incidencia.dataresolucio || '—' %></td>
               <td class="text-center">
-                <div class="btn-group btn-group-sm" role="group">
-                  <a href="/admin/<%= incidencia.id %>/edit" class="btn btn-outline-light" title="Editar">
-                    <i class="bi bi-pencil-square"></i>
-                  </a>
-                  <button class="btn btn-outline-danger" onclick="confirmDelete('<%= incidencia.id %>')" title="Eliminar">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                  <a href="/admin/<%= incidencia.id %>/actuacions" class="btn btn-outline-info" title="Veure Actuacions">
-                    <i class="bi bi-eye"></i>
-                  </a>
-                </div>
+              <div class="btn-group btn-group-sm" role="group">
+                <a href="/admin/<%= incidencia.id %>/edit" class="btn btn-outline-primary" title="Editar">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <button class="btn btn-outline-danger" onclick="confirmDelete('<%= incidencia.id %>')" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+                <a href="/admin/<%= incidencia.id %>/actuacions" class="btn btn-outline-info" title="Veure Actuacions">
+                  <i class="bi bi-eye"></i>
+                </a>
+              </div>
               </td>
             </tr>
           <% }) %>
@@ -57,7 +57,6 @@
     </div>
   </div>
 </div>
-
 <script>
   function confirmDelete(id) {
     Swal.fire({

@@ -2,106 +2,66 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-<div class="container mt-4">
-  <div class="card shadow-sm border-0">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-      <h4 class="mb-0">Incidències assignades a <%= tecnic.nom %></h4>
-    </div>
-    <div class="card-body p-0">
-      <% if (incidencies.length === 0) { %>
-        <div class="p-4">
-          <p class="mb-3 text-muted">No tens cap incidència assignada.</p>
-          <a href="/tecnic/incidencies/noassignades?tecnic_id=<%= tecnic.id %>" class="btn btn-outline-secondary">
-            <i class="bi bi-search"></i> Veure incidències no assignades
-          </a>
-        </div>
-      <% } else { %>
-        <table class="table table-bordered table-hover align-middle mb-0">
-    <style>
-      .sortable {
-        color: inherit;
-        text-decoration: none;
-      }
-    </style>
-
-    <thead class="table-light text-center">
-      <tr>
-        <th>Nom</th>
-        <th>Descripció</th>
-        
-        <th>
-          <a class="sortable" href="?tecnic_id=<%= tecnic.id %>&sort=datacreacio&order=<%= sortField === 'datacreacio' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>">
-            Data Creació
-            <% if (sortField === 'datacreacio') { %>
-              <i class="bi <%= sortOrder === 'ASC' ? 'bi-arrow-up' : 'bi-arrow-down' %>"></i>
-            <% } %>
-          </a>
-        </th>
-        
-        <th>Estat</th>
-        <th>Actuacions</th>
-        
-        <th>
-          <a class="sortable" href="?tecnic_id=<%= tecnic.id %>&sort=prioritat_id&order=<%= sortField === 'prioritat_id' && sortOrder === 'ASC' ? 'DESC' : 'ASC' %>">
-            Prioritat
-            <% if (sortField === 'prioritat_id') { %>
-              <i class="bi <%= sortOrder === 'ASC' ? 'bi-arrow-up' : 'bi-arrow-down' %>"></i>
-            <% } %>
-          </a>
-        </th>
-        <th>Data Resolució</th>
-        <th>Accions</th>
-      
-      </tr>
-    </thead>
-          <tbody>
-            <% incidencies.forEach(incidencia => { %>
-              <tr>
-                <td><%= incidencia.nom %></td>
-                <td><%= incidencia.descripcio %></td>
-                <td><%= incidencia.datacreacio %></td>
-                <td><%= incidencia.estat.nom %></td>
-                <td>
-                  <% if (incidencia.actuacions && incidencia.actuacions.length > 0) { %>
-                    <ul class="mb-0 ps-3">
-                      <% incidencia.actuacions.forEach(actuacio => { %>
-                        <li><%= actuacio.descripcio %>.  Data: <%= actuacio.data %></li>
-                      <% }) %>
-                    </ul>
-                  <% } else { %>
-                    <span class="text-muted">Cap actuació</span>
-                  <% } %>
-                </td>
-                <td><%= incidencia.prioritat ? incidencia.prioritat.nom : '—' %></td>
-                <td><%= incidencia.dataresolucio || '—' %></td>
-                <td class="text-center">
-                  <div class="btn-group btn-group-sm" role="group">
-                    <a href="/tecnic/incidencies/<%= incidencia.id %>/actuacions" class="btn btn-outline-secondary" title="Veure actuacions">
-                      <i class="bi bi-eye"></i>
-                    </a>
-                    <a href="/tecnic/incidencies/<%= incidencia.id %>/actuacions/new" class="btn btn-outline-primary" title="Afegir actuació">
-                      <i class="bi bi-plus-circle"></i>
-                    </a>
-                    
-                   <a href="/tecnic/incidencies/<%= incidencia.id %>/edit" class="btn btn-outline-warning" title="Editar">
-                      <i class="bi bi-pencil-square"></i>
-                   </a>
-                   
-                  </div>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-
-        <div class="p-3 border-top">
-          <a href="/tecnic/incidencies/noassignades?tecnic_id=<%= tecnic.id %>" class="btn btn-outline-secondary">
-            <i class="bi bi-search"></i> Veure incidències no assignades
-          </a>
-        </div>
-      <% } %>
-    </div>
+<div class="container mt-5">
+  <div class="mb-4 text-center">
+    <h1 class="text-dark">Incidències assignades a <%= tecnic.nom %></h1>
   </div>
+
+  <% if (incidencies.length === 0) { %>
+    <div class="alert alert-warning text-center">
+      <strong>No tens cap incidència assignada.</strong>
+    </div>
+    <div class="text-center">
+      <a href="/tecnic/incidencies/noassignades?tecnic_id=<%= tecnic.id %>" class="btn btn-outline-secondary">
+        <i class="bi bi-search"></i> Veure incidències no assignades
+      </a>
+    </div>
+  <% } else { %>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <% incidencies.forEach(incidencia => { %>
+        <div class="col">
+          <div class="card shadow-lg rounded-3 border-0 hover-scale h-100">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-dark"><%= incidencia.nom %></h5>
+              <p class="card-text text-muted mb-2"><%= incidencia.descripcio %></p>
+              <div class="mb-2">
+                <span class="badge bg-secondary"><%= incidencia.departament?.nom || '—' %></span>
+                <span class="badge bg-warning text-dark"><%= incidencia.prioritat?.nom || '—' %></span>
+              </div>
+              <p class="text-muted mb-1"><i class="bi bi-calendar-event me-2"></i><%= new Date(incidencia.datacreacio).toLocaleDateString('es-ES') %></p>
+              <p class="text-muted"><strong>Estat:</strong> <%= incidencia.estat?.nom || '—' %></p>
+              <% if (incidencia.dataresolucio) { %>
+                <p class="text-muted"><i class="bi bi-check2-circle me-1"></i>Resolució: <%= new Date(incidencia.dataresolucio).toLocaleDateString('es-ES') %></p>
+              <% } %>
+              <% if (incidencia.actuacions && incidencia.actuacions.length > 0) { %>
+                <div class="mt-2">
+                  <p class="fw-semibold mb-1">Actuacions:</p>
+                  <ul class="small ps-3">
+                    <% incidencia.actuacions.forEach(actuacio => { %>
+                      <li><%= actuacio.descripcio %> - <%= actuacio.data %></li>
+                    <% }) %>
+                  </ul>
+                </div>
+              <% } %>
+              <div class="mt-auto pt-3 d-flex justify-content-between align-items-center">
+                <div class="btn-group btn-group-sm" role="group">
+                  <a href="/tecnic/incidencies/<%= incidencia.id %>/actuacions" class="btn btn-outline-secondary" title="Veure actuacions">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  <a href="/tecnic/incidencies/<%= incidencia.id %>/actuacions/new" class="btn btn-outline-primary" title="Afegir actuació">
+                    <i class="bi bi-plus-circle"></i>
+                  </a>
+                  <a href="/tecnic/incidencies/<%= incidencia.id %>/edit" class="btn btn-outline-warning" title="Editar">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
 </div>
 
 <%- include('../partials/footer') %>
