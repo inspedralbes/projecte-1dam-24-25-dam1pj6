@@ -1,42 +1,60 @@
 <%- include('../partials/header', { title: 'Incidències no assignades' }) %>
 
-<h1>Incidències no assignades</h1>
+<div class="container my-5">
+  <div class="text-center mb-4">
+    <h1 class="display-5 text-dark">
+      <i class="bi bi-exclamation-circle-fill text-warning"></i> Incidències no assignades
+    </h1>
+    <p class="lead text-muted">Selecciona les incidències que vols assignar-te com a tècnic.</p>
+  </div>
 
-<form action="/tecnic/incidencies/assignar" method="POST" id="assignarForm">
-  <input type="hidden" name="tecnic_id" value="<%= tecnic.id %>">
-  <% if (incidencies.length === 0) { %>
-    <p>No hi ha incidències pendents d'assignació.</p>
-  <% } else { %>
-    <table class="table">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Nom</th>
-          <th>Descripció</th>
-          <th>Data Creació</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% incidencies.forEach(incidencia => { %>
-          <tr>
-            <td><input type="checkbox" name="incidencies_ids[]" value="<%= incidencia.id %>"></td>
-            <td><%= incidencia.nom %></td>
-            <td><%= incidencia.descripcio %></td>
-            <td><%= incidencia.datacreacio %></td>
-          </tr>
-        <% }) %>
-      </tbody>
-    </table>
-    <button type="submit" class="btn btn-success">Assignar-me les seleccionades</button>
-  <% } %>
-</form>
+  <form action="/tecnic/incidencies/assignar" method="POST" id="assignarForm">
+    <input type="hidden" name="tecnic_id" value="<%= tecnic.id %>">
+
+    <% if (incidencies.length === 0) { %>
+      <div class="alert alert-info text-center" role="alert">
+        <i class="bi bi-check-circle-fill"></i> No hi ha incidències pendents d'assignació.
+      </div>
+    <% } else { %>
+      <div class="table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col"><i class="bi bi-check2-square"></i></th>
+              <th scope="col"><i class="bi bi-person"></i> Nom</th>
+              <th scope="col"><i class="bi bi-card-text"></i> Descripció</th>
+              <th scope="col"><i class="bi bi-calendar-event"></i> Data Creació</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% incidencies.forEach(incidencia => { %>
+              <tr>
+                <td>
+                  <input class="form-check-input" type="checkbox" name="incidencies_ids[]" value="<%= incidencia.id %>">
+                </td>
+                <td><%= incidencia.nom %></td>
+                <td><%= incidencia.descripcio %></td>
+                <td><%= incidencia.datacreacio %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="text-end">
+        <button type="submit" class="btn btn-success btn-lg">
+          <i class="bi bi-person-check-fill"></i> Assignar-me les seleccionades
+        </button>
+      </div>
+    <% } %>
+  </form>
+</div>
 
 <script>
   document.getElementById('assignarForm').addEventListener('submit', function(event) {
     const checkboxes = document.querySelectorAll('input[name="incidencies_ids[]"]:checked');
-    
     if (checkboxes.length === 0) {
-      event.preventDefault(); 
+      event.preventDefault();
       alert('Si us plau, selecciona almenys una incidència.');
     }
   });

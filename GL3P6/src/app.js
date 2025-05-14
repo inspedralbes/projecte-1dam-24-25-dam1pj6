@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const sequelize = require('./db');
+const mongoose = require('./mongo'); 
 const app = express();
 const incidenciaRoutes = require('./routes/incidencies.routes');
 const admin = require('./routes/admin.routes');
@@ -12,12 +13,36 @@ const Prioritat = require('./models/prioritat');
 const Tipus = require('./models/tipus'); 
 const Incidencia = require('./models/incidencia');
 const Actuacio = require('./models/actuacio');
+const Log = require('./models/logModel');
+const logsRoutes = require('./routes/logs.routes');
 
 
 // Configurar EJS como motor de plantillas
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));  // Ruta a tus vistas
 app.use(express.urlencoded({ extended: true })); 
+
+// Middleware para registrar los logs
+app.use((req, res, next) => {
+  const log = new Log({
+    url: req.originalUrl,  // URL visitada
+    userAgent: req.headers['user-agent'],  // Navegador
+    timestamp: new Date(),  // Fecha y hora del acceso
+  });
+
+  log.save()
+    .then(() => {
+      console.log(`Log guardado: ${req.originalUrl}`);
+      next(); // Continua con la solicitud
+    })
+    .catch((err) => {
+      console.error('Error al guardar el log:', err);
+      next(); // Continua de todas formas
+    });
+});
+
+// Usar las rutas de logs
+app.use('/logs', logsRoutes);
 
 // Rutas de incidencias
 app.use('/incidencies', incidenciaRoutes);
@@ -299,9 +324,7 @@ const incidenciaDades = [
       }
     }
 
-console.log('Incidències de prova creades amb actuacions');
-
-
+    console.log('Incidències de prova creades amb actuacions');
 
 
     // Iniciar el servidor
