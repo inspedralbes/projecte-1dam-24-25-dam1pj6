@@ -7,6 +7,7 @@ const Departamento = require('../models/departament');
 const Estat = require('../models/estat');
 const Actuacio = require('../models/actuacio');
 const Prioritat = require('../models/prioritat');
+const Tipus = require('../models/tipus');
 const moment = require('moment');
 
 // Mostrar página principal para seleccionar técnico
@@ -98,7 +99,8 @@ router.get('/incidencies/:id/edit', async (req, res) => {
       include: [
         { model: Estat, as: 'estat' },
         { model: Actuacio, as: 'actuacions' },
-        { model: Prioritat, as: 'prioritat' }
+        { model: Prioritat, as: 'prioritat' },
+        { model: Tipus, as: 'tipus' }
       ]
     });
 
@@ -107,12 +109,13 @@ router.get('/incidencies/:id/edit', async (req, res) => {
     const estat = await Estat.findAll();
     const departamentos = await Departamento.findAll();
     const prioritats = await Prioritat.findAll();
+    const tipus = await Tipus.findAll();
 
     incidencia.dataresolucio = incidencia.dataresolucio
       ? moment(incidencia.dataresolucio).format('YYYY-MM-DD')
       : '';
 
-    res.render('incidencies/edit', { incidencia, departamentos, prioritats, estat });
+    res.render('incidencies/edit', { incidencia, departamentos, prioritats, estat, tipus });
   } catch (error) {
     console.error('Error al cargar la incidencia:', error);
     res.status(500).send('Error al cargar la incidencia ' + error);
@@ -120,9 +123,10 @@ router.get('/incidencies/:id/edit', async (req, res) => {
 });
 
 // Actualizar incidencia
+// Actualizar incidencia
 router.post('/incidencies/:id/update', async (req, res) => {
   try {
-    const { estat_id, dataresolucio, acceptat, prioritat_id } = req.body;
+    const { estat_id, dataresolucio, acceptat, prioritat_id, tipus_id } = req.body;
     const estatResolta = await Estat.findOne({ where: { nom: 'Resolta' } });
     const incidencia = await Incidencia.findByPk(req.params.id);
     if (!incidencia) return res.status(404).send('Incidència no trobada');
@@ -137,6 +141,7 @@ router.post('/incidencies/:id/update', async (req, res) => {
 
     incidencia.acceptat = acceptat === 'on';
     incidencia.prioritat_id = prioritat_id || null;
+    incidencia.tipus_id = tipus_id || null;  
 
     await incidencia.save();
     res.redirect(`/tecnic/incidencies?tecnic_id=${incidencia.tecnic_id}`);
@@ -145,6 +150,7 @@ router.post('/incidencies/:id/update', async (req, res) => {
     res.status(500).send('Error al actualizar la incidencia');
   }
 });
+
 
 // Llista d'incidències resoltes d'un tècnic
 router.get('/incidencies/resoltes', async (req, res, next) => {

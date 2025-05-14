@@ -6,6 +6,8 @@ const Estat = require('../models/estat');
 const Tecnic = require('../models/tecnic');
 const Actuacio = require('../models/actuacio');
 const Prioritat = require('../models/prioritat');
+const Tipus = require('../models/tipus');
+
 
 
 // Mostrar listado de incidencias
@@ -16,14 +18,15 @@ router.get('/', async (req, res) => {
         { model: Departamento, as: 'departament' },
         { model: Estat, as: 'estat' },
         { model: Tecnic, as: 'tecnic' }, 
-        { model: Prioritat, as: 'prioritat' } 
+        { model: Prioritat, as: 'prioritat' },
+        { model: Tipus, as: 'tipus' }
       ]
     });
 
     res.render('admin/index', { incidencies });
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error al carregar les incidències');
+    res.status(500).send('Error al carregar les incidències' + error);
   }
 });
 
@@ -38,14 +41,16 @@ router.get('/:id/edit', async (req, res) => {
     const departamentos = await Departamento.findAll();
     const estats = await Estat.findAll();
     const tecnics = await Tecnic.findAll();  
-    const prioritats = await Prioritat.findAll();  // Cambio aquí: 'prioritats' en lugar de 'prioritat'
+    const prioritats = await Prioritat.findAll();  
+    const tipus = await Tipus.findAll();  // Cambié 'Tipus' a 'tipus'
 
     res.render('admin/edit', {
       incidencia,
       departamentos,
       estats,
       tecnics,
-      prioritats  // Y pasamos 'prioritats' a la vista
+      prioritats,
+      tipus  // Usa 'tipus' aquí en lugar de 'Tipus'
     });
   } catch (error) {
     console.error('Error al cargar la incidencia:', error);
@@ -53,13 +58,14 @@ router.get('/:id/edit', async (req, res) => {
   }
 });
 
+
 // Actualizar incidencia
 router.post('/:id/update', async (req, res) => {
   try {
     const {
       nom,
       departament_id,
-      tipus,
+      tipus_id,
       descripcio,
       datacreacio,
       estat_id,
@@ -74,7 +80,7 @@ router.post('/:id/update', async (req, res) => {
 
     incidencia.nom = nom;
     incidencia.departament_id = departament_id;
-    incidencia.tipus = tipus;
+    incidencia.tipus_id = tipus_id;
     incidencia.descripcio = descripcio;
     incidencia.datacreacio = datacreacio;
     incidencia.estat_id = estat_id;

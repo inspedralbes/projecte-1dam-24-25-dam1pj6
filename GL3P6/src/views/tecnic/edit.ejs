@@ -1,49 +1,115 @@
 <%- include('../partials/header', { title: 'Editar Incidència' }) %>
 
-<div class="container mt-4">
-  <h3 class="text-center mb-4" style="font-weight: normal;">Editar Incidència</h3>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <form action="/tecnic/incidencies/<%= incidencia.id %>/update" method="POST">
-    <div class="mb-3">
-      <label for="estat_id" class="form-label">Estat</label>
-      <select class="form-control" id="estat_id" name="estat_id">
-        <% estats.forEach(estat => { %>
-          <option value="<%= estat.id %>" <%= estat.id === incidencia.estat_id ? 'selected' : '' %>>
-            <%= estat.nom %>
-          </option>
-        <% }) %>
-      </select>
+<main class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-primary text-white text-center py-4 rounded-top-4">
+          <h3 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Editar Incidència</h3>
+        </div>
+        <div class="card-body bg-light p-5">
+
+          <form id="editForm" action="/tecnic/incidencies/<%= incidencia.id %>/update" method="POST" novalidate>
+
+            <!-- Nombre -->
+            <div class="mb-4">
+              <label for="nom" class="form-label fw-semibold text-dark">Nom de la Incidència</label>
+              <div class="input-group">
+                <span class="input-group-text bg-secondary text-white"><i class="bi bi-card-text"></i></span>
+                <input type="text" class="form-control border-secondary" id="nom" name="nom" value="<%= incidencia.nom %>" required>
+                <div class="invalid-feedback">El nom és obligatori.</div>
+              </div>
+            </div>
+
+            <!-- Departament y Estat -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="departament_id" class="form-label fw-semibold text-dark">Departament</label>
+                <select class="form-select border-secondary" id="departament_id" name="departament_id" required>
+                  <option disabled value="">Seleccioneu...</option>
+                  <% departamentos.forEach(departamento => { %>
+                    <option value="<%= departamento.id %>" <%= departamento.id === incidencia.departament_id ? 'selected' : '' %>><%= departamento.nom %></option>
+                  <% }) %>
+                </select>
+                <div class="invalid-feedback">Escull un departament.</div>
+              </div>
+
+              <div class="col-md-6">
+                <label for="estat_id" class="form-label fw-semibold text-dark">Estat</label>
+                <select class="form-select border-secondary" id="estat_id" name="estat_id" required>
+                  <% estats.forEach(estat => { %>
+                    <option value="<%= estat.id %>" <%= estat.id === incidencia.estat_id ? 'selected' : '' %>><%= estat.nom %></option>
+                  <% }) %>
+                </select>
+                <div class="invalid-feedback">Escull un estat.</div>
+              </div>
+            </div>
+
+            <!-- Prioritat, Tècnic y Tipus -->
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <label for="prioritat_id" class="form-label fw-semibold text-dark">Prioritat</label>
+                <select class="form-select border-secondary" id="prioritat_id" name="prioritat_id" required>
+                  <% prioritats.forEach(p => { %>
+                    <option value="<%= p.id %>" <%= p.id === incidencia.prioritat_id ? 'selected' : '' %>><%= p.nom %></option>
+                  <% }) %>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label for="tecnic_id" class="form-label fw-semibold text-dark">Tècnic Assignat</label>
+                <select class="form-select border-secondary" id="tecnic_id" name="tecnic_id" required>
+                  <% tecnics.forEach(tecnic => { %>
+                    <option value="<%= tecnic.id %>" <%= tecnic.id === incidencia.tecnic_id ? 'selected' : '' %>><%= tecnic.nom %></option>
+                  <% }) %>
+                </select>
+                <div class="invalid-feedback">Assigna un tècnic.</div>
+              </div>
+            </div>
+
+            <!-- Descripció -->
+            <div class="mb-4">
+              <label for="descripcio" class="form-label fw-semibold text-dark">Descripció</label>
+              <textarea class="form-control border-secondary" id="descripcio" name="descripcio" rows="5" required><%= incidencia.descripcio %></textarea>
+              <div class="invalid-feedback">La descripció no pot estar buida.</div>
+            </div>
+
+            <!-- Data Resolució -->
+            <div class="mb-4">
+              <label for="dataresolucio" class="form-label fw-semibold text-dark">Data Resolució</label>
+              <input type="date" class="form-control border-secondary" id="dataresolucio" name="dataresolucio"
+                     value="<%= incidencia.dataresolucio ? new Date(incidencia.dataresolucio).toISOString().split('T')[0] : '' %>">
+            </div>
+
+            <!-- Botón de actualizar -->
+            <button type="submit" class="btn btn-primary w-100 py-2">Actualizar Incidència</button>
+          </form>
+
+          <!-- Enlace de regreso -->
+          <div class="mt-3 text-center">
+            <a href="/tecnic/incidencies?tecnic_id=<%= incidencia.tecnic_id %>" class="text-secondary">Tornar a la llista d'incidències</a>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="mb-3">
-      <label for="dataresolucio" class="form-label">Data de Resolució</label>
-      <input type="datetime-local" class="form-control" id="dataresolucio" name="dataresolucio"
-             value="<%= incidencia.dataresolucio ? incidencia.dataresolucio.toISOString().slice(0, 16) : '' %>">
-    </div>
-
-    <div class="mb-3">
-      <label for="prioritat_id" class="form-label">Prioritat</label>
-      <select class="form-control" id="prioritat_id" name="prioritat_id">
-        <% prioritats.forEach(p => { %>
-          <option value="<%= p.id %>" <%= p.id === incidencia.prioritat_id ? 'selected' : '' %>>
-            <%= p.nom %>
-          </option>
-        <% }) %>
-      </select>
-    </div>
-
-    <div class="form-check mb-3">
-      <input type="checkbox" class="form-check-input" id="acceptat" name="acceptat" value="true"
-             <%= incidencia.acceptat ? 'checked' : '' %>>
-      <label class="form-check-label" for="acceptat">Acceptar Incidència</label>
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">Actualizar</button>
-  </form>
-
-  <div class="mt-3 text-center">
-    <a href="/tecnic/incidencies?tecnic_id=<%= incidencia.tecnic_id %>" class="btn btn-link">Tornar</a>
   </div>
-</div>
+</main>
 
-<%- include('../partials/footer') %>
+<script>
+  // Validació de formulari amb Bootstrap
+  (() => {
+    'use strict';
+    const form = document.getElementById('editForm');
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      form.classList.add('was-validated');
+    }, false);
+  })();
+</script>

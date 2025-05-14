@@ -1,11 +1,12 @@
-// src/models/incidencia.js
+
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db');
 const Departament = require('./departament');
-const Estat = require('./estat');  
+const Estat = require('./estat');
 const Tecnic = require('./tecnic');
-const Actuacio = require('./actuacio'); 
+const Actuacio = require('./actuacio');
 const Prioritat = require('./prioritat');
+const Tipus = require('./tipus');  
 
 const Incidencia = sequelize.define('Incidencia', {
   id: {
@@ -25,9 +26,13 @@ const Incidencia = sequelize.define('Incidencia', {
       key: 'id',
     },
   },
-  tipus: {
-    type: DataTypes.STRING,
+  tipus_id: {                         
+    type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: Tipus,
+      key: 'id',
+    },
   },
   descripcio: {
     type: DataTypes.TEXT,
@@ -35,12 +40,12 @@ const Incidencia = sequelize.define('Incidencia', {
   },
   datacreacio: {
     type: DataTypes.DATEONLY,
-    defaultValue: DataTypes.NOW, 
+    defaultValue: DataTypes.NOW,
   },
   estat_id: {
     type: DataTypes.INTEGER,
     references: {
-      model: Estat, 
+      model: Estat,
       key: 'id'
     },
     allowNull: true,
@@ -48,7 +53,15 @@ const Incidencia = sequelize.define('Incidencia', {
   tecnic_id: {
     type: DataTypes.INTEGER,
     references: {
-      model: Tecnic, 
+      model: Tecnic,
+      key: 'id'
+    },
+    allowNull: true,
+  },
+  prioritat_id: {                    
+    type: DataTypes.INTEGER,
+    references: {
+      model: Prioritat,
       key: 'id'
     },
     allowNull: true,
@@ -58,20 +71,31 @@ const Incidencia = sequelize.define('Incidencia', {
     allowNull: true,
   },
 }, {
+  tableName: 'Incidencia',
   timestamps: false,
 });
 
-Incidencia.belongsTo(Estat, {
-  foreignKey: 'estat_id',
-  as: 'estat',
-});
+// Associations
 Incidencia.belongsTo(Departament, {
   foreignKey: 'departament_id',
   as: 'departament',
 });
-Incidencia.belongsTo(Tecnic, { 
-  foreignKey: 'tecnic_id', 
-  as: 'tecnic' });
+Incidencia.belongsTo(Tipus, {
+  foreignKey: 'tipus_id',
+  as: 'tipus',
+});
+Incidencia.belongsTo(Estat, {
+  foreignKey: 'estat_id',
+  as: 'estat',
+});
+Incidencia.belongsTo(Tecnic, {
+  foreignKey: 'tecnic_id',
+  as: 'tecnic'
+});
+Incidencia.belongsTo(Prioritat, {
+  foreignKey: 'prioritat_id',
+  as: 'prioritat'
+});
 Incidencia.hasMany(Actuacio, {
   foreignKey: 'incidencia_id',
   as: 'actuacions'
@@ -79,10 +103,6 @@ Incidencia.hasMany(Actuacio, {
 Actuacio.belongsTo(Incidencia, {
   foreignKey: 'incidencia_id',
   as: 'incidencia'
-});
-Incidencia.belongsTo(Prioritat, { 
-  foreignKey: 'prioritat_id', 
-  as: 'prioritat' 
 });
 
 module.exports = Incidencia;

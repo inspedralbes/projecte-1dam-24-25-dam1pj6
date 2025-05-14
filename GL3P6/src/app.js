@@ -9,6 +9,8 @@ const Estat = require('./models/estat');
 const Departamento = require('./models/departament'); 
 const Tecnic = require('./models/tecnic');
 const Prioritat = require('./models/prioritat');
+const Tipus = require('./models/tipus'); 
+
 
 // Configurar EJS como motor de plantillas
 app.set('view engine', 'ejs');
@@ -92,6 +94,24 @@ sequelize.sync({ force: false })
 }
 
 console.log('Prioritats inicials verificades o creades');
+
+  const tipusList = [
+  { nom: 'Hardware' },
+  { nom: 'Software' },
+  { nom: 'Xarxes' },
+  { nom: 'Altres' }
+];
+
+for (const tipus of tipusList) {
+  await Tipus.findOrCreate({
+    where: { nom: tipus.nom },
+    defaults: { nom: tipus.nom }
+  });
+}
+
+console.log('Tipus inicials verificats o creats');
+
+
 
 
     // Iniciar el servidor

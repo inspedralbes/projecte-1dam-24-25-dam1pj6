@@ -1,17 +1,18 @@
 <%- include('../partials/header', { title: "Administració d'Incidències" }) %>
 
-<!-- Bootstrap Icons CDN -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<div class="container mt-4">
-  <div class="card shadow-sm border-0">
+<div class="container mt-5">
+  <div class="card shadow-sm border-0 rounded-3">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-      <h4 class="mb-0">Administració d'Incidències</h4>
+      <h4 class="mb-0"><i class="bi bi-bug"></i> Administració d'Incidències</h4>
+      <a href="/incidencies/new" class="btn btn-light btn-sm"><i class="bi bi-plus"></i> Nova Incidència</a>
     </div>
     <div class="card-body p-0">
       <table class="table table-bordered table-hover mb-0 align-middle">
-        <thead class="table-light">
-          <tr class="text-center">
+        <thead class="table-dark text-white text-center">
+          <tr>
             <th>ID</th>
             <th>Nom</th>
             <th>Departament</th>
@@ -26,24 +27,24 @@
         </thead>
         <tbody>
           <% incidencies.forEach(incidencia => { %>
-            <tr>
-              <td class="text-center"><%= incidencia.id %></td>
+            <tr class="text-center">
+              <td><%= incidencia.id %></td>
               <td><%= incidencia.nom %></td>
               <td><%= incidencia.departament?.nom %></td>
-              <td><%= incidencia.tipus %></td>
+              <td><%= incidencia.tipus?.nom || '—' %></td>
               <td><%= incidencia.datacreacio %></td>
               <td><%= incidencia.tecnic?.nom || '—' %></td>
-              <td><%= incidencia.estat?.nom %></td>
+              <td><%= incidencia.estat?.nom || '—' %></td>
               <td><%= incidencia.prioritat?.nom || '—' %></td>
               <td><%= incidencia.dataresolucio || '—' %></td>
               <td class="text-center">
                 <div class="btn-group btn-group-sm" role="group">
-                  <a href="/admin/<%= incidencia.id %>/edit" class="btn btn-outline-warning" title="Editar">
+                  <a href="/admin/<%= incidencia.id %>/edit" class="btn btn-outline-light" title="Editar">
                     <i class="bi bi-pencil-square"></i>
                   </a>
-                  <a href="/admin/<%= incidencia.id %>/delete" class="btn btn-outline-danger" title="Eliminar" onclick="return confirm('Estàs segur que vols eliminar aquesta incidència?')">
+                  <button class="btn btn-outline-danger" onclick="confirmDelete('<%= incidencia.id %>')" title="Eliminar">
                     <i class="bi bi-trash"></i>
-                  </a>
+                  </button>
                   <a href="/admin/<%= incidencia.id %>/actuacions" class="btn btn-outline-info" title="Veure Actuacions">
                     <i class="bi bi-eye"></i>
                   </a>
@@ -56,5 +57,24 @@
     </div>
   </div>
 </div>
+
+<script>
+  function confirmDelete(id) {
+    Swal.fire({
+      title: 'Vols eliminar aquesta incidència?',
+      text: "Aquesta acció no es pot desfer!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: 'Sí, elimina-la!',
+      cancelButtonText: 'Cancel·la'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `/admin/${id}/delete`;
+      }
+    });
+  }
+</script>
 
 <%- include('../partials/footer') %>

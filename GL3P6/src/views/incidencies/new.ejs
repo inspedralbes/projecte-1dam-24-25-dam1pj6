@@ -1,6 +1,7 @@
 <%- include('../partials/header', { title: 'Crear Incidència' }) %>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container mt-5">
   <div class="card shadow-sm border-0 rounded-4">
@@ -26,9 +27,15 @@
         </div>
 
         <div class="mb-3">
-          <label for="tipus" class="form-label fw-semibold">Tipus</label>
-          <input type="text" class="form-control" id="tipus" name="tipus" placeholder="Ex: Hardware, Programari..." required>
-        </div>
+        <label for="tipus_id" class="form-label fw-semibold">Tipus</label>
+        <select class="form-select" id="tipus_id" name="tipus_id" required>
+          <option selected disabled value="">Selecciona un tipus</option>
+          <% tipus.forEach(tipo => { %>
+            <option value="<%= tipo.id %>"><%= tipo.nom %></option>
+          <% }) %>
+        </select>
+         </div>
+
 
         <div class="mb-3">
           <label for="descripcio" class="form-label fw-semibold">Descripció</label>
@@ -42,5 +49,17 @@
     </div>
   </div>
 </div>
+
+<% if (successMessage) { %>
+  <script>
+    Swal.fire({
+      title: '¡Incidència Creada!',
+      text: '<%= successMessage %>',
+      icon: 'success',
+      confirmButtonText: 'Cerrar',
+      confirmButtonColor: '#3085d6'
+    });
+  </script>
+<% } %>
 
 <%- include('../partials/footer') %>
