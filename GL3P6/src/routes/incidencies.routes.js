@@ -87,42 +87,44 @@
     }
   });
 
-  // Crear nueva incidencia
-  router.post('/create', async (req, res) => {
-    try {
-      const { nom, departament_id, tipus_id, descripcio } = req.body; 
+ // Crear nueva incidencia
+router.post('/create', async (req, res) => {
+  try {
+    const { nom, departament_id, tipus_id, descripcio } = req.body; 
 
-      const dataCreacio = moment().tz('Europe/Madrid').toDate();
-      const estat_id = 1; 
-      const dataResolucio = null;
-      const tecnic_id = null;
+    const dataCreacio = moment().tz('Europe/Madrid').toDate();
+    const estat_id = 1; 
+    const dataResolucio = null;
+    const tecnic_id = null;
 
-      const incidencia = await Incidencia.create({
-        nom,
-        departament_id,
-        tipus_id,   
-        descripcio,
-        datacreacio: dataCreacio,
-        estat_id,
-        dataresolucio: dataResolucio,
-        tecnic_id
-      });
+    const incidencia = await Incidencia.create({
+      nom,
+      departament_id,
+      tipus_id,   
+      descripcio,
+      datacreacio: dataCreacio,
+      estat_id,
+      dataresolucio: dataResolucio,
+      tecnic_id
+    });
 
-      console.log('Incidencia creada:', incidencia);
-      const departamentos = await Departamento.findAll();
-      const tipus = await Tipus.findAll();  
-      res.render('incidencies/new', {
-        successMessage: 'Incidència creada correctament!',
-        departamentos,
-        tipus   
-      });
-    } catch (error) {
-      console.error('Error al crear la incidencia:', error);
-      res.status(500).send("No s'ha pogut crear l'incidència: " + error);
-    }
-  });
+    console.log('Incidencia creada:', incidencia);
 
+    const departamentos = await Departamento.findAll();
+    const tipus = await Tipus.findAll();
 
+    // Pasamos el id para mostrar en el popup
+    res.render('incidencies/new', {
+      successMessage: 'Incidència creada correctament!',
+      incidenciaId: incidencia.id,
+      departamentos,
+      tipus   
+    });
+  } catch (error) {
+    console.error('Error al crear la incidencia:', error);
+    res.status(500).send("No s'ha pogut crear l'incidència: " + error);
+  }
+});
 
  // Mostrar formulario para editar
 router.get('/:id/edit', async (req, res) => {
@@ -189,7 +191,7 @@ router.get('/:id/edit', async (req, res) => {
     incidencia.dataresolucio   = dataresolucio ? dataresolucio : null;
 
     await incidencia.save();
-    res.redirect('/incidencies');
+    res.redirect(`/tecnic/incidencies/${incidencia.id}/edit`);
   } catch (error) {
     console.error('Error al actualizar la incidencia:', error);
     res.status(500).send("No s'ha pogut actualitzar l'incidència: " + error);

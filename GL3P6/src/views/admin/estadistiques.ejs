@@ -1,0 +1,116 @@
+<%- include('../partials/header', { title: 'Estadístiques' }) %>
+
+<!-- Aquí ya no es necesario agregar el estilo, todo se maneja con Bootstrap -->
+
+<h1 class="text-dark">Estadístiques d'Accesos</h1>
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <p><strong>Total d'accessos:</strong> <%= estadistiques.totalAccessos %></p>
+  </div>
+</div>
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">Pàgines més visitades</h2>
+    <canvas id="paginesChart"></canvas>
+  </div>
+</div>
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">Usuaris més actius</h2>
+    <canvas id="usuarisChart"></canvas>
+  </div>
+</div>
+
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h2 class="card-title">Accessos diaris últims 30 dies</h2>
+    <canvas id="accessosDiariChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Variables que inyectamos desde el servidor con JSON.stringify y <%- %>
+  const paginesLabels = <%- JSON.stringify(estadistiques.paginesMesVisitades.map(p => p._id)) %>;
+  const paginesValues = <%- JSON.stringify(estadistiques.paginesMesVisitades.map(p => p.visites)) %>;
+
+  const usuarisLabels = <%- JSON.stringify(estadistiques.usuarisMesActius.map(u => u._id)) %>;
+  const usuarisValues = <%- JSON.stringify(estadistiques.usuarisMesActius.map(u => u.accessos)) %>;
+
+  const accessosDiariLabels = <%- JSON.stringify(estadistiques.accessosDiaris.map(d => `${d._id.any}-${String(d._id.mes).padStart(2,'0')}-${String(d._id.dia).padStart(2,'0')}`)) %>;
+  const accessosDiariValues = <%- JSON.stringify(estadistiques.accessosDiaris.map(d => d.count)) %>;
+
+  // Chart Pàgines més visitades
+  const ctxPagines = document.getElementById('paginesChart').getContext('2d');
+  new Chart(ctxPagines, {
+    type: 'bar',
+    data: {
+      labels: paginesLabels,
+      datasets: [{
+        label: 'Visites',
+        data: paginesValues,
+        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true } },
+      plugins: { legend: { display: false }, tooltip: { enabled: true } }
+    }
+  });
+
+  // Chart Usuaris més actius (horizontal)
+  const ctxUsuaris = document.getElementById('usuarisChart').getContext('2d');
+  new Chart(ctxUsuaris, {
+    type: 'bar',
+    data: {
+      labels: usuarisLabels,
+      datasets: [{
+        label: 'Accessos',
+        data: usuarisValues,
+        backgroundColor: 'rgba(255, 159, 64, 0.7)',
+        borderColor: 'rgba(255, 159, 64, 1)',
+        borderWidth: 1,
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      scales: { x: { beginAtZero: true } },
+      plugins: { legend: { display: false }, tooltip: { enabled: true } }
+    }
+  });
+
+  // Chart Accessos diaris últims 30 dies (línea)
+  const ctxAccessos = document.getElementById('accessosDiariChart').getContext('2d');
+  new Chart(ctxAccessos, {
+    type: 'line',
+    data: {
+      labels: accessosDiariLabels,
+      datasets: [{
+        label: 'Accessos diaris',
+        data: accessosDiariValues,
+        fill: true,
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        borderColor: 'rgba(75, 192, 192, 1)',
+        tension: 0.3,
+        pointRadius: 3
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true } },
+      plugins: { legend: { display: true }, tooltip: { enabled: true } }
+    }
+  });
+</script>
+
+<%- include('../partials/footer') %>

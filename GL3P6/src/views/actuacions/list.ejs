@@ -1,4 +1,5 @@
 <%- include('../partials/header', { title: 'Actuacions de la Incidència' }) %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container py-5">
   <h1 class="text-center mb-5 text-dark">
@@ -18,6 +19,7 @@
             <th>Temps Invertit (min)</th>
             <th>Data</th>
             <th class="text-center">Visible per l'Usuari</th>
+            <th class="text-center">Accions</th>
           </tr>
         </thead>
         <tbody>
@@ -31,6 +33,11 @@
                   <%= actuacio.visible_per_usuari ? 'Visible' : 'No Visible' %>
                 </span>
               </td>
+              <td class="text-center">
+                <button onclick="confirmDelete('<%= incidencia.id %>', '<%= actuacio.id %>')" class="btn btn-danger btn-sm">
+                  <i class="bi bi-trash-fill"></i> Eliminar
+                </button>
+              </td>
             </tr>
           <% }) %>
         </tbody>
@@ -38,11 +45,37 @@
     </div>
   <% } %>
 
-  <div class="text-center mt-5">
-    <a href="javascript:history.back()" class="btn btn-outline-dark btn-sm px-4 py-2 rounded-pill">
-      <i class="bi bi-arrow-left me-2"></i> Tornar enrere
+  <!-- Botones organizados -->
+  <div class="text-center mt-5 d-grid gap-3">
+    <!-- Botón "Tornar enrere" para el técnico -->
+    <a href="/tecnic/incidencies?tecnic_id=<%= tecnic.id %>" class="btn btn-outline-dark btn-sm px-4 py-2 rounded-pill">
+      <i class="bi bi-arrow-left me-2"></i> Tornar enrere al tècnic
+    </a>
+
+    <!-- Botón "Tornar enrere" para Admin -->
+    <a href="/admin" class="btn btn-outline-dark btn-sm px-4 py-2 rounded-pill">
+      <i class="bi bi-arrow-left me-2"></i> Tornar enrere a Admin
     </a>
   </div>
 </div>
+
+<script>
+function confirmDelete(incidenciaId, actuacioId) {
+  Swal.fire({
+    title: 'Segur que vols eliminar aquesta actuació?',
+    text: "Aquesta acció no es pot desfer.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sí, elimina-la!',
+    cancelButtonText: 'Cancel·la'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = `/tecnic/incidencies/${incidenciaId}/actuacions/${actuacioId}/delete`;
+    }
+  });
+}
+</script>
 
 <%- include('../partials/footer') %>

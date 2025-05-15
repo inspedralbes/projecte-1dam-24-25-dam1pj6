@@ -1,65 +1,103 @@
 <%- include('../partials/header', { title: 'Crear Incidència' }) %>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<div class="container mt-5">
-  <div class="card shadow-sm border-0 rounded-4">
-    <div class="card-body p-4">
-      <h3 class="text-center mb-4">
-        <i class="bi bi-bug-fill text-primary me-2"></i>Crear Nova Incidència
-      </h3>
-
-      <form action="/incidencies/create" method="POST" class="needs-validation" novalidate>
-        <div class="mb-3">
-          <label for="nom" class="form-label fw-semibold">Nom</label>
-          <input type="text" class="form-control" id="nom" name="nom" placeholder="Ex: Impressora no funciona" required>
+<div class="container my-5" style="max-width: 600px;">
+  <div class="card shadow-sm">
+    <div class="card-header bg-dark text-white text-center fs-4 fw-bold">
+      Crear Nova Incidència
+    </div>
+    <div class="card-body">
+      <form action="/incidencies/create" method="POST" class="needs-validation" novalidate autocomplete="off">
+        <div class="mb-4">
+          <label for="nom" class="form-label fw-semibold">Nom de la incidència</label>
+          <input
+            type="text"
+            class="form-control"
+            id="nom"
+            name="nom"
+            placeholder="Ex: Impressora no funciona"
+            required
+            maxlength="150"
+          />
+          <div class="invalid-feedback">El nom és obligatori i ha de tenir menys de 150 caràcters.</div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-4">
           <label for="departament_id" class="form-label fw-semibold">Departament</label>
           <select class="form-select" id="departament_id" name="departament_id" required>
-            <option selected disabled value="">Selecciona un departament</option>
+            <option value="" disabled selected>Selecciona un departament</option>
             <% departamentos.forEach(departamento => { %>
               <option value="<%= departamento.id %>"><%= departamento.nom %></option>
             <% }) %>
           </select>
+          <div class="invalid-feedback">Has de seleccionar un departament.</div>
         </div>
 
-        <div class="mb-3">
-        <label for="tipus_id" class="form-label fw-semibold">Tipus</label>
-        <select class="form-select" id="tipus_id" name="tipus_id" required>
-          <option selected disabled value="">Selecciona un tipus</option>
-          <% tipus.forEach(tipo => { %>
-            <option value="<%= tipo.id %>"><%= tipo.nom %></option>
-          <% }) %>
-        </select>
-         </div>
+        <div class="mb-4">
+          <label for="tipus_id" class="form-label fw-semibold">Tipus d'incidència</label>
+          <select class="form-select" id="tipus_id" name="tipus_id" required>
+            <option value="" disabled selected>Selecciona un tipus</option>
+            <% tipus.forEach(tipo => { %>
+              <option value="<%= tipo.id %>"><%= tipo.nom %></option>
+            <% }) %>
+          </select>
+          <div class="invalid-feedback">Has de seleccionar un tipus.</div>
+        </div>
 
-
-        <div class="mb-3">
+        <div class="mb-4">
           <label for="descripcio" class="form-label fw-semibold">Descripció</label>
-          <textarea class="form-control" id="descripcio" name="descripcio" rows="4" placeholder="Explica breument el problema" required></textarea>
+          <textarea
+            class="form-control"
+            id="descripcio"
+            name="descripcio"
+            rows="5"
+            placeholder="Descripció detallada del problema"
+            required
+            maxlength="1000"
+          ></textarea>
+          <div class="invalid-feedback">La descripció és obligatòria i no pot superar els 1000 caràcters.</div>
         </div>
 
-        <button type="submit" class="btn btn-outline-primary w-100">
-          <i class="bi bi-check-circle me-1"></i> Crear Incidència
+        <button type="submit" class="btn btn-dark w-100 fw-semibold">
+          Crear Incidència
         </button>
       </form>
     </div>
   </div>
 </div>
 
-<% if (successMessage) { %>
+<script>
+  // Validación Bootstrap 5
+  (() => {
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', e => {
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+  })();
+</script>
+
+<% if (successMessage && incidenciaId) { %>
   <script>
     Swal.fire({
-      title: '¡Incidència Creada!',
-      text: '<%= successMessage %>',
       icon: 'success',
-      confirmButtonText: 'Cerrar',
-      confirmButtonColor: '#3085d6'
+      title: 'Incidència creada amb èxit',
+      html:
+        `<p><strong><%= successMessage %></strong></p>` +
+        `<p>El teu ID d'incidència és: <span class="fw-bold"><%= incidenciaId %></span></p>`,
+      confirmButtonText: 'D\'acord',
+      confirmButtonColor: '#343a40',
     });
   </script>
 <% } %>
+
 
 <%- include('../partials/footer') %>

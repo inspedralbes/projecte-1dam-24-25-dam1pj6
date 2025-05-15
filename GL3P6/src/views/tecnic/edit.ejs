@@ -15,7 +15,7 @@
 
           <form id="editForm" action="/tecnic/incidencies/<%= incidencia.id %>/update" method="POST" novalidate>
 
-            <!-- Nombre -->
+ 
             <div class="mb-4">
               <label for="nom" class="form-label fw-semibold text-dark">Nom de la Incidència</label>
               <div class="input-group">
@@ -25,7 +25,6 @@
               </div>
             </div>
 
-            <!-- Departament y Estat -->
             <div class="row mb-4">
               <div class="col-md-6">
                 <label for="departament_id" class="form-label fw-semibold text-dark">Departament</label>
@@ -48,8 +47,6 @@
                 <div class="invalid-feedback">Escull un estat.</div>
               </div>
             </div>
-
-            <!-- Prioritat, Tècnic y Tipus -->
             <div class="row mb-4">
               <div class="col-md-6">
                 <label for="prioritat_id" class="form-label fw-semibold text-dark">Prioritat</label>
@@ -70,26 +67,18 @@
                 <div class="invalid-feedback">Assigna un tècnic.</div>
               </div>
             </div>
-
-            <!-- Descripció -->
             <div class="mb-4">
               <label for="descripcio" class="form-label fw-semibold text-dark">Descripció</label>
               <textarea class="form-control border-secondary" id="descripcio" name="descripcio" rows="5" required><%= incidencia.descripcio %></textarea>
               <div class="invalid-feedback">La descripció no pot estar buida.</div>
             </div>
-
-            <!-- Data Resolució -->
             <div class="mb-4">
               <label for="dataresolucio" class="form-label fw-semibold text-dark">Data Resolució</label>
               <input type="date" class="form-control border-secondary" id="dataresolucio" name="dataresolucio"
                      value="<%= incidencia.dataresolucio ? new Date(incidencia.dataresolucio).toISOString().split('T')[0] : '' %>">
             </div>
-
-            <!-- Botón de actualizar -->
             <button type="submit" class="btn btn-primary w-100 py-2">Actualizar Incidència</button>
           </form>
-
-          <!-- Enlace de regreso -->
           <div class="mt-3 text-center">
             <a href="/tecnic/incidencies?tecnic_id=<%= incidencia.tecnic_id %>" class="text-secondary">Tornar a la llista d'incidències</a>
           </div>
@@ -99,17 +88,5 @@
   </div>
 </main>
 
-<script>
-  // Validació de formulari amb Bootstrap
-  (() => {
-    'use strict';
-    const form = document.getElementById('editForm');
-    form.addEventListener('submit', event => {
-      if (!form.checkValidity()) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-      form.classList.add('was-validated');
-    }, false);
-  })();
-</script>
+
+<%- include('../partials/footer') %>

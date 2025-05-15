@@ -4,59 +4,77 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container mt-5">
-  <div class="card shadow-sm border-0 rounded-3">
-    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-      <h4 class="mb-0"><i class="bi bi-bug"></i> Administració d'Incidències</h4>
-      <a href="/incidencies/new" class="btn btn-light btn-sm"><i class="bi bi-plus"></i> Nova Incidència</a>
-    </div>
-    <div class="card-body p-0">
-      <table class="table table-bordered table-hover mb-0 align-middle">
-        <thead class="table-dark text-white text-center">
-          <tr>
-            <th>ID</th>
-            <th>Nom</th>
-            <th>Departament</th>
-            <th>Tipus</th>
-            <th>Data Creació</th>
-            <th>Tècnic</th>
-            <th>Estat</th>
-            <th>Prioritat</th>
-            <th>Data Resolució</th>
-            <th>Accions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% incidencies.forEach(incidencia => { %>
-            <tr class="text-center">
-              <td><%= incidencia.id %></td>
-              <td><%= incidencia.nom %></td>
-              <td><%= incidencia.departament?.nom %></td>
-              <td><%= incidencia.tipus?.nom || '—' %></td>
-              <td><%= incidencia.datacreacio %></td>
-              <td><%= incidencia.tecnic?.nom || '—' %></td>
-              <td><%= incidencia.estat?.nom || '—' %></td>
-              <td><%= incidencia.prioritat?.nom || '—' %></td>
-              <td><%= incidencia.dataresolucio || '—' %></td>
-              <td class="text-center">
-              <div class="btn-group btn-group-sm" role="group">
-                <a href="/admin/<%= incidencia.id %>/edit" class="btn btn-outline-primary" title="Editar">
-                  <i class="bi bi-pencil-square"></i>
-                </a>
-                <button class="btn btn-outline-danger" onclick="confirmDelete('<%= incidencia.id %>')" title="Eliminar">
-                  <i class="bi bi-trash"></i>
-                </button>
-                <a href="/admin/<%= incidencia.id %>/actuacions" class="btn btn-outline-info" title="Veure Actuacions">
-                  <i class="bi bi-eye"></i>
-                </a>
-              </div>
-              </td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    </div>
+  <!-- Formulario de filtro -->
+  <div class="mb-4">
+    <form method="GET" action="/admin">
+      <div class="row justify-content-center">
+        <div class="col-md-4">
+          <input type="text" name="search" class="form-control" placeholder="Buscar incidència..." value="<%= search || '' %>">
+        </div>
+        <div class="col-md-3">
+          <select name="estat" class="form-select">
+            <option value="">Selecciona un estat</option>
+            <option value="pendiente" <%= estat === 'pendiente' ? 'selected' : '' %>>Pendent d'assignar</option>
+            <option value="assignada" <%= estat === 'assignada' ? 'selected' : '' %>>Assignada</option>
+            <option value="resuelta" <%= estat === 'resuelta' ? 'selected' : '' %>>Resolta</option>
+            <option value="pendent_dassignar" <%= estat === 'pendent_dassignar' ? 'selected' : '' %>>Totes</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-dark btn-sm"><i class="bi bi-search"></i> Buscar</button>
+        </div>
+      </div>
+    </form>
   </div>
+
+  <div class="mb-4 text-center">
+    <h1 class="text-dark"><i class="bi bi-bug"></i> Administració d'Incidències</h1>
+    <a href="/incidencies/new" class="btn btn-dark btn-sm mt-3"><i class="bi bi-plus"></i> Nova Incidència</a>
+  </div>
+
+  <% if (incidencies.length === 0) { %>
+    <div class="alert alert-warning text-center">
+      <strong>No hi ha incidències registrades.</strong>
+    </div>
+  <% } else { %>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <% incidencies.forEach(incidencia => { %>
+        <div class="col">
+          <div class="card shadow-lg rounded-3 border-0 h-100">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-dark"><%= incidencia.nom %></h5>
+              <p class="card-text text-muted mb-2"><%= incidencia.tipus?.nom || '—' %></p>
+              <div class="mb-2">
+                <span class="badge bg-secondary"><%= incidencia.departament?.nom || '—' %></span>
+                <span class="badge bg-warning text-dark"><%= incidencia.prioritat?.nom || '—' %></span>
+              </div>
+              <p class="text-muted mb-1"><i class="bi bi-calendar-event me-2"></i><%= new Date(incidencia.datacreacio).toLocaleDateString('es-ES') %></p>
+              <p class="text-muted"><strong>Estat:</strong> <%= incidencia.estat?.nom || '—' %></p>
+              <p class="text-muted"><strong>Tècnic:</strong> <%= incidencia.tecnic?.nom || '—' %></p>
+              <% if (incidencia.dataresolucio) { %>
+                <p class="text-muted"><i class="bi bi-check2-circle me-1"></i> Resolució: <%= new Date(incidencia.dataresolucio).toLocaleDateString('es-ES') %></p>
+              <% } %>
+              <div class="mt-auto pt-3 d-flex justify-content-between align-items-center">
+                <div class="d-flex gap-2 justify-content-start mt-auto pt-3">
+                  <a href="/tecnic/incidencies/<%= incidencia.id %>/actuacions" class="btn btn-info btn-sm d-flex align-items-center gap-1" title="Veure actuacions">
+                    <i class="bi bi-eye-fill"></i><span>Actuacions</span>
+                  </a>
+                  <a href="/admin/<%= incidencia.id %>/edit" class="btn btn-warning btn-sm d-flex align-items-center gap-1" title="Editar incidència">
+                    <i class="bi bi-pencil-fill"></i><span>Edita</span>
+                  </a>
+                  <button class="btn btn-danger btn-sm d-flex align-items-center gap-1" onclick="confirmDelete('<%= incidencia.id %>')" title="Eliminar incidència">
+                    <i class="bi bi-trash-fill"></i><span>Elimina</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
 </div>
+
 <script>
   function confirmDelete(id) {
     Swal.fire({

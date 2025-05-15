@@ -45,8 +45,10 @@ router.get('/incidencies', async (req, res) => {
       ],
       order: [[sortField, sortOrder]]
     });
+    
+    const success = req.query.success;
 
-    res.render('tecnic/list', { incidencies, tecnic, sortField, sortOrder });
+    res.render('tecnic/list', { incidencies, tecnic, sortField, sortOrder, success });
   } catch (error) {
     console.error('Error al cargar incidències:', error);
     res.status(500).send('Error al cargar incidències');
@@ -57,16 +59,27 @@ router.get('/incidencies', async (req, res) => {
 router.get('/incidencies/noassignades', async (req, res) => {
   try {
     const tecnicId = req.query.tecnic_id;
+    if (!tecnicId) return res.status(400).send('Tècnic no especificat');
+
     const tecnic = await Tecnic.findByPk(tecnicId);
     if (!tecnic) return res.status(404).send('Tècnic no trobat');
 
-    const incidencies = await Incidencia.findAll({ where: { tecnic_id: null } });
+    const estatPendent = 1; // o buscar dinámicamente el id si prefieres
+
+    const incidencies = await Incidencia.findAll({
+      where: {
+        estat_id: estatPendent,
+      }
+    });
+
     res.render('tecnic/noassignades', { tecnic, incidencies });
   } catch (error) {
     console.error('Error al cargar incidències no assignades:', error);
     res.status(500).send('Error al cargar les incidències no assignades');
   }
 });
+
+
 
 // Assignar incidències seleccionades al tècnic
 router.post('/incidencies/assignar', async (req, res) => {
@@ -186,9 +199,6 @@ router.post('/incidencies/:id/delete', async (req, res) => {
     res.status(500).send('Error al eliminar la incidència');
   }
 });
-
-module.exports = router;
-
 // ACTUACIONS
 
 // Mostrar actuacions de una incidència
@@ -199,14 +209,17 @@ router.get('/incidencies/:id/actuacions', async (req, res) => {
       include: [{ model: Actuacio, as: 'actuacions' }]
     });
 
-    if (!incidencia) return res.status(404).send('Incidència no trobada');
+    if (!incidencia) return res.status(404).send('Incidència no trobada ');
 
-    res.render('actuacions/list', { actuacions: incidencia.actuacions, incidencia });
+    const tecnic = await Tecnic.findByPk(incidencia.tecnic_id);
+
+    res.render('actuacions/list', { actuacions: incidencia.actuacions, incidencia, tecnic });
   } catch (error) {
     console.error('Error al cargar les actuacions:', error);
-    res.status(500).send('Error al cargar les actuacions');
+    res.status(500).send('Error al cargar les actuacions ' + error);
   }
 });
+
 
 // Mostrar formulario para afegir una nova actuació
 router.get('/incidencies/:id/actuacions/new', async (req, res) => {
@@ -228,6 +241,12 @@ router.post('/incidencies/:id/actuacions/create', async (req, res) => {
     const { descripcio, temps_invertit, visible_per_usuari, resolt } = req.body;
     const incidenciaId = req.params.id;
 
+    const incidencia = await Incidencia.findByPk(incidenciaId);
+
+    if (!incidencia) {
+      return res.status(404).send('Incidència no trobada');
+    }
+
     const actuacio = await Actuacio.create({
       data: new Date(),
       descripcio,
@@ -235,11 +254,10 @@ router.post('/incidencies/:id/actuacions/create', async (req, res) => {
       visible_per_usuari: visible_per_usuari === 'true',
       resolt: resolt === 'true',
       incidencia_id: incidenciaId,
-      data: new Date(),
     });
 
     console.log('Actuació creada:', actuacio);
-    res.redirect(`/tecnic/incidencies/${incidenciaId}/actuacions`);
+    res.redirect(`/tecnic/incidencies?tecnic_id=${incidencia.tecnic_id}&success=1`);
   } catch (error) {
     console.error('Error al crear la actuació:', error);
     res.status(500).send('Error al crear la actuació');
@@ -247,25 +265,28 @@ router.post('/incidencies/:id/actuacions/create', async (req, res) => {
 });
 
 // Eliminar actuació
-router.post('/actuacions/:id/delete', async (req, res) => {
-  if (req.body._method === 'DELETE') {
-    try {
-      const actuacio = await Actuacio.findByPk(req.params.id);
-      if (!actuacio) return res.status(404).send('Actuació no trobada');
+router.get('/incidencies/:incidenciaId/actuacions/:actuacioId/delete', async (req, res) => {
+  try {
+    const { incidenciaId, actuacioId } = req.params;
 
-      const incidenciaId = actuacio.incidencia_id;
-      await actuacio.destroy();
+    // Verificamos que la actuació existe y pertenece a la incidencia
+    const actuacio = await Actuacio.findOne({ 
+      where: { id: actuacioId, incidencia_id: incidenciaId }
+    });
 
-      res.redirect(`/tecnic/incidencies/${incidenciaId}/actuacions`);
-    } catch (error) {
-      console.error('Error al eliminar la actuació:', error);
-      res.status(500).send('Error al eliminar la actuació');
+    if (!actuacio) {
+      return res.status(404).send('Actuació no trobada o no pertany a la incidència indicada');
     }
-  } else {
-    res.status(405).send('Método no permitido');
+
+    await actuacio.destroy();
+
+    // Redirigimos a la lista de actuaciones de esa incidencia
+    res.redirect(`/tecnic/incidencies/${incidenciaId}/actuacions`);
+  } catch (error) {
+    console.error('Error al eliminar l\'actuació:', error);
+    res.status(500).send('Error al eliminar l\'actuació');
   }
 });
-
 
 
 module.exports = router;

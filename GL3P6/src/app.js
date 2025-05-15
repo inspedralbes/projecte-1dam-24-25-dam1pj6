@@ -16,7 +16,6 @@ const Actuacio = require('./models/actuacio');
 const Log = require('./models/logModel');
 const logsRoutes = require('./routes/logs.routes');
 
-
 // Configurar EJS como motor de plantillas
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));  // Ruta a tus vistas
@@ -48,6 +47,7 @@ app.use('/logs', logsRoutes);
 app.use('/incidencies', incidenciaRoutes);
 app.use('/admin', admin);
 app.use('/tecnic', tecnic);
+
 
 // Ruta de prueba
 app.get('/', (req, res) => {

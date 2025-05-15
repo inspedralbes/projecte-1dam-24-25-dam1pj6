@@ -1,59 +1,88 @@
 <%- include('../partials/header', { title: 'Logs' }) %>
 
-<div class="container">
-  <div class="card shadow-lg border-0 mb-5">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-          <h2 class="mb-0 text-dark">
-            <i class="bi bi-journal-text me-2"></i> Logs del Sistema
-          </h2>
-          <p class="text-muted mb-0">Visualitza els registres d’activitat del sistema en temps real.</p>
-        </div>
-        <button onclick="refrescarLogs()" class="btn btn-outline-primary btn-lg">
-          <i class="bi bi-arrow-clockwise"></i> Actualitzar
-        </button>
-      </div>
 
-      <div class="table-responsive">
-        <table class="table table-hover align-middle text-center">
-          <thead class="table-dark">
-            <tr>
-              <th scope="col"><i class="bi bi-link-45deg"></i> URL</th>
-              <th scope="col"><i class="bi bi-laptop"></i> User-Agent</th>
-              <th scope="col"><i class="bi bi-clock-history"></i> Data i Hora</th>
-            </tr>
-          </thead>
-          <tbody id="logTableBody">
-            <% logs.forEach((log, index) => { %>
-              <tr class="<%= index === 0 ? 'table-success fade-highlight' : '' %>">
-                <td><%= log.url %></td>
-                <td><%= log.userAgent %></td>
-                <td><%= log.timestamp.toISOString().replace('T', ' ').substr(0, 19) %></td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+<div class="container">
+ <div class="card shadow-lg border-0 mb-5">
+   <div class="card-body">
+     <div class="d-flex justify-content-between align-items-center mb-4">
+       <div>
+         <h2 class="mb-0 text-dark">
+           <i class="bi bi-journal-text me-2"></i> Logs del Sistema
+         </h2>
+         <p class="text-muted mb-0">Visualitza els registres d’activitat del sistema en temps real.</p>
+       </div>
+       <button onclick="refrescarLogs()" class="btn btn-outline-primary btn-lg">
+         <i class="bi bi-arrow-clockwise"></i> Actualitzar
+       </button>
+     </div>
+
+
+     <!-- ✅ Date Filter Form -->
+     <form class="row g-3 mb-4" method="GET" action="/logs">
+       <div class="col-auto">
+         <input type="date" class="form-control" name="date" value="<%= filterDate || '' %>" required>
+       </div>
+       <div class="col-auto">
+         <button type="submit" class="btn btn-primary">
+           <i class="bi bi-search"></i> Filtra per data
+         </button>
+       </div>
+       <div class="col-auto">
+         <a href="/logs" class="btn btn-secondary">
+           <i class="bi bi-x-circle"></i> Neteja filtre
+         </a>
+       </div>
+     </form>
+
+
+     <div class="table-responsive">
+       <table class="table table-hover align-middle text-center">
+         <thead class="table-dark">
+           <tr>
+             <th scope="col"><i class="bi bi-link-45deg"></i> URL</th>
+             <th scope="col"><i class="bi bi-laptop"></i> User-Agent</th>
+             <th scope="col"><i class="bi bi-clock-history"></i> Data i Hora</th>
+           </tr>
+         </thead>
+         <tbody id="logTableBody">
+           <% if (logs.length === 0) { %>
+             <tr>
+               <td colspan="3" class="text-muted">No s’han trobat registres per a aquesta data.</td>
+             </tr>
+           <% } else { %>
+             <% logs.forEach((log, index) => { %>
+               <tr class="<%= index === 0 ? 'table-success fade-highlight' : '' %>">
+                 <td><%= log.url %></td>
+                 <td><%= log.userAgent %></td>
+                 <td><%= log.timestamp.toISOString().replace('T', ' ').substr(0, 19) %></td>
+               </tr>
+             <% }) %>
+           <% } %>
+         </tbody>
+       </table>
+     </div>
+   </div>
+ </div>
 </div>
+
 
 <%- include('../partials/footer') %>
 
+
 <!-- Script per actualitzar i ressaltar l’última entrada -->
 <script>
-  function refrescarLogs() {
-    window.location.reload();
-  }
+ function refrescarLogs() {
+   window.location.reload();
+ }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const fila = document.querySelector('.fade-highlight');
-    if (fila) {
-      fila.classList.add('table-warning');
-      setTimeout(() => {
-        fila.classList.remove('table-warning');
-      }, 2000);
-    }
-  });
+
+ document.addEventListener('DOMContentLoaded', () => {
+   const fila = document.querySelector('.fade-highlight');
+   if (fila) {
+     fila.classList.add('table-warning');
+     setTimeout(() => {
+       fila.classList.remove('table-warning');
+     }, 2000);
+   }
+ });
 </script>

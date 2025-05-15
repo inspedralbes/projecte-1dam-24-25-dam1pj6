@@ -1,4 +1,5 @@
 const express = require('express');
+const { Op } = require('sequelize');
 const router = express.Router();
 const Incidencia = require('../models/incidencia'); 
 const Departamento = require('../models/departament'); 
@@ -7,13 +8,38 @@ const Tecnic = require('../models/tecnic');
 const Actuacio = require('../models/actuacio');
 const Prioritat = require('../models/prioritat');
 const Tipus = require('../models/tipus');
+const { obtenerEstadisticas } = require('../models/estadistiquesMongo');
 
 
 
 // Mostrar listado de incidencias
 router.get('/', async (req, res) => {
   try {
+    const { search, estat } = req.query;  // Obtener los filtros de búsqueda
+
+    // Crear los filtros de búsqueda
+    let whereConditions = {};
+
+    if (search) {
+      whereConditions.nom = { [Op.like]: `%${search}%` };  // Filtro por nombre
+    }
+
+    // Mapeamos el filtro 'estat' a los valores correctos de la base de datos
+    if (estat) {
+      if (estat === 'pendiente') {
+        whereConditions.estat_id = { [Op.eq]: 1 };  // "Pendiente d'assignar"
+      } else if (estat === 'assignada') {
+        whereConditions.estat_id = { [Op.eq]: 2 };  // "Assignada"
+      } else if (estat === 'en_proces') {
+        whereConditions.estat_id = { [Op.eq]: 3 };  // "En procés"
+      } else if (estat === 'resuelta') {
+        whereConditions.estat_id = { [Op.eq]: 4 };  // "Resolta"
+      }
+    }
+
+    // Realizar la consulta con los filtros aplicados
     const incidencies = await Incidencia.findAll({
+      where: whereConditions,  // Aplicar los filtros
       include: [
         { model: Departamento, as: 'departament' },
         { model: Estat, as: 'estat' },
@@ -23,12 +49,14 @@ router.get('/', async (req, res) => {
       ]
     });
 
-    res.render('admin/index', { incidencies });
+    // Renderizar la vista con los filtros aplicados
+    res.render('admin/index', { incidencies, search, estat });
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al carregar les incidències' + error);
   }
 });
+
 
 // Mostrar formulario para editar
 router.get('/:id/edit', async (req, res) => {
@@ -140,6 +168,122 @@ router.get('/:id/actuacions', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al mostrar les actuacions ' + error);
+  }
+});
+
+// ACTUACIONS
+
+// Mostrar actuacions de una incidència
+router.get('/:id/actuacions', async (req, res) => {
+  try {
+    const incidenciaId = req.params.id;
+    const incidencia = await Incidencia.findByPk(incidenciaId, {
+      include: [
+        { model: Departamento, as: 'departament' },
+        { model: Estat, as: 'estat' },
+        { model: Tecnic, as: 'tecnic' }, // Incluimos el técnico aquí
+        { model: Actuacio, as: 'actuacions' }  
+      ]
+    });
+
+    if (!incidencia) {
+      return res.status(404).send('Incidència no trobada');
+    }
+
+    // Accede al técnico desde la incidencia
+    const tecnic = incidencia.tecnic;
+
+    // Pasa 'tecnic' correctamente a la vista
+    res.render('actuacions/list', {
+      incidencia,
+      actuacions: incidencia.actuacions || [],
+      tecnic // Asegúrate de pasar esta variable
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al mostrar les actuacions ' + error);
+  }
+});
+
+
+
+// Mostrar formulario para afegir una nova actuació
+router.get('/incidencies/:id/actuacions/new', async (req, res) => {
+  try {
+    const incidenciaId = req.params.id;
+    const incidencia = await Incidencia.findByPk(incidenciaId);
+    if (!incidencia) return res.status(404).send('Incidència no trobada');
+
+    res.render('actuacions/new', { incidencia });
+  } catch (error) {
+    console.error('Error al mostrar el formulario de actuació:', error);
+    res.status(500).send('Error al mostrar el formulario de actuació');
+  }
+});
+
+// Crear una nueva actuació
+router.post('/incidencies/:id/actuacions/create', async (req, res) => {
+  try {
+    const { descripcio, temps_invertit, visible_per_usuari, resolt } = req.body;
+    const incidenciaId = req.params.id;
+
+    const incidencia = await Incidencia.findByPk(incidenciaId);
+
+    if (!incidencia) {
+      return res.status(404).send('Incidència no trobada');
+    }
+
+    const actuacio = await Actuacio.create({
+      data: new Date(),
+      descripcio,
+      temps_invertit,
+      visible_per_usuari: visible_per_usuari === 'true',
+      resolt: resolt === 'true',
+      incidencia_id: incidenciaId,
+    });
+
+    console.log('Actuació creada:', actuacio);
+    res.redirect(`/tecnic/incidencies?tecnic_id=${incidencia.tecnic_id}&success=1`);
+  } catch (error) {
+    console.error('Error al crear la actuació:', error);
+    res.status(500).send('Error al crear la actuació');
+  }
+});
+
+// Eliminar actuació
+router.get('/incidencies/:incidenciaId/actuacions/:actuacioId/delete', async (req, res) => {
+  try {
+    const { incidenciaId, actuacioId } = req.params;
+
+    // Verificamos que la actuació existe y pertenece a la incidencia
+    const actuacio = await Actuacio.findOne({ 
+      where: { id: actuacioId, incidencia_id: incidenciaId }
+    });
+
+    if (!actuacio) {
+      return res.status(404).send('Actuació no trobada o no pertany a la incidència indicada');
+    }
+
+    await actuacio.destroy();
+
+    // Redirigimos a la lista de actuaciones de esa incidencia
+    res.redirect(`/tecnic/incidencies/${incidenciaId}/actuacions`);
+  } catch (error) {
+    console.error('Error al eliminar l\'actuació:', error);
+    res.status(500).send('Error al eliminar l\'actuació');
+  }
+});
+
+
+//ESTADISTIQUES MONGO
+
+router.get('/estadistiques', async (req, res) => {
+  try {
+    const estadistiques = await obtenerEstadisticas();
+    res.render('admin/estadistiques', { estadistiques });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error obtenint les estadístiques' + error);
   }
 });
 
