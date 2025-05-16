@@ -11,11 +11,9 @@
 
   router.post('/buscar', async (req, res) => {
     const { id } = req.body;
-
     if (!id || id.trim() === '') {
       return res.render('index', { error: 'Has d’introduir una ID.', incidencia: null });
     }
-
     try {
       const incidencia = await Incidencia.findOne({
         where: { id: id },
@@ -150,10 +148,11 @@ router.get('/:id/edit', async (req, res) => {
     res.render('incidencies/edit', {
       incidencia,
       departamentos,
-      estats: estat,        // <-- aquí
-      prioritats,   // <-- y aquí
-      tecnics,      // <-- y aquí
-      tipus         // <-- y aquí
+      estats: estat,       
+      prioritats,  
+      tecnics,     
+      tipus,
+      tecnic: incidencia.tencic        
     });
   } catch (error) {
     console.error('Error al cargar la incidencia:', error);

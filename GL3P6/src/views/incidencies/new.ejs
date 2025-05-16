@@ -86,17 +86,22 @@
 </script>
 
 <% if (successMessage && incidenciaId) { %>
-  <script>
-    Swal.fire({
-      icon: 'success',
-      title: 'Incidència creada amb èxit',
-      html:
-        `<p><strong><%= successMessage %></strong></p>` +
-        `<p>El teu ID d'incidència és: <span class="fw-bold"><%= incidenciaId %></span></p>`,
-      confirmButtonText: 'D\'acord',
-      confirmButtonColor: '#343a40',
-    });
-  </script>
+ <script>
+  Swal.fire({
+    icon: 'success',
+    title: 'Incidència creada amb èxit',
+    html:
+      `<p><strong><%= successMessage %></strong></p>` +
+      `<p>El teu ID d'incidència és: <span class="fw-bold"><%= incidenciaId %></span></p>`,
+    confirmButtonText: 'D\'acord',
+    confirmButtonColor: '#343a40',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = '/'; 
+    }
+  });
+</script>
+
 <% } %>
 
 

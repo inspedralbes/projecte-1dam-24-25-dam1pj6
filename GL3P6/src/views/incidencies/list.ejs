@@ -1,4 +1,5 @@
-<%- include('../partials/header', { title: 'Listado de Incidències' }) %>
+<%- include('../partials/header', { title: "Llistat d'incidències" }) %>
+
 
 <div class="container my-5">
   <h1 class="mb-4">Llistat d'incidències</h1>
@@ -16,7 +17,7 @@
               <h5 class="card-title"><%= incidencia.nom %></h5>
               <h6 class="card-subtitle mb-2 text-muted">
                 <i class="bi bi-building"></i> <%= incidencia.departament ? incidencia.departament.nom : 'N/A' %> &nbsp;|&nbsp;
-                <i class="bi bi-tag"></i> <%= incidencia.tipus.nom %>
+                <i class="bi bi-tag"></i> <%= incidencia.tipus ? incidencia.tipus.nom : 'N/A' %>
               </h6>
               <p class="card-text flex-grow-1"><%= incidencia.descripcio %></p>
               <div class="mt-auto">

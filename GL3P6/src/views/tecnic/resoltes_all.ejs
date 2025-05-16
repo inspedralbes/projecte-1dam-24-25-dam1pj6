@@ -1,5 +1,8 @@
 <%- include('../partials/header', { title: 'Incidències resoltes' }) %>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 <div class="container mt-5">
   <h1 class="mb-4 text-dark">Incidències resoltes</h1>
 
@@ -25,8 +28,8 @@
                 <i class="bi bi-calendar-check me-2"></i>
                 <span><%= new Date(incidencia.dataresolucio).toLocaleDateString('es-ES') %></span>
               </div>
-              <form action="/tecnic/incidencies/<%= incidencia.id %>/delete" method="POST" style="display:inline;">
-                <button type="submit" class="btn btn-danger btn-sm">
+              <form action="/tecnic/incidencies/<%= incidencia.id %>/delete" method="POST" style="display:inline;" class="delete-form">
+                <button type="submit" class="btn btn-danger btn-sm delete-btn">
                   <i class="bi bi-trash me-2"></i> Eliminar
                 </button>
               </form>
@@ -43,5 +46,28 @@
     <i class="bi bi-arrow-left-circle me-2"></i> Tornar a la selecció de tècnic
   </a>
 </div>
+
+<script>
+  document.querySelectorAll('.delete-form').forEach(form => {
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // evita envío directo
+      Swal.fire({
+        title: 'Vols eliminar aquesta incidència?',
+        text: "Aquesta acció no es pot desfer!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, elimina-la!',
+        cancelButtonText: 'Cancel·la'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          form.submit(); // envía formulario solo si confirma
+        }
+      });
+    });
+  });
+</script>
+
 
 <%- include('../partials/footer') %>

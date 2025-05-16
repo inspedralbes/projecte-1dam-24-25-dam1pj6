@@ -1,7 +1,5 @@
 <%- include('../partials/header', { title: 'Estadístiques' }) %>
 
-<!-- Aquí ya no es necesario agregar el estilo, todo se maneja con Bootstrap -->
-
 <h1 class="text-dark">Estadístiques d'Accesos</h1>
 
 <div class="card mb-4 shadow-sm">
@@ -66,7 +64,7 @@
     }
   });
 
-  // Chart Usuaris més actius (horizontal)
+  // Chart Usuaris més actius 
   const ctxUsuaris = document.getElementById('usuarisChart').getContext('2d');
   new Chart(ctxUsuaris, {
     type: 'bar',
@@ -89,7 +87,7 @@
     }
   });
 
-  // Chart Accessos diaris últims 30 dies (línea)
+  // Chart Accessos diaris últims 30 dies 
   const ctxAccessos = document.getElementById('accessosDiariChart').getContext('2d');
   new Chart(ctxAccessos, {
     type: 'line',

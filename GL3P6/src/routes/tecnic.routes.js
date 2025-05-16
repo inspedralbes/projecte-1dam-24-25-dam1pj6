@@ -27,17 +27,25 @@ router.get('/incidencies', async (req, res) => {
     const tecnicId = req.query.tecnic_id;
     const sortField = req.query.sort || 'datacreacio';
     const sortOrder = req.query.order === 'DESC' ? 'DESC' : 'ASC';
+    const prioritatId = req.query.prioritat_id;
 
     const tecnic = await Tecnic.findByPk(tecnicId);
     if (!tecnic) return res.status(404).send('Tècnic no trobat');
 
     const estatResolta = await Estat.findOne({ where: { nom: 'Resolta' } });
 
+    // Construir condicions dinàmiques
+    const whereConditions = {
+      tecnic_id: tecnicId,
+      estat_id: { [Op.ne]: estatResolta.id }
+    };
+
+    if (prioritatId) {
+      whereConditions.prioritat_id = prioritatId;
+    }
+
     const incidencies = await Incidencia.findAll({
-      where: {
-        tecnic_id: tecnicId,
-        estat_id: { [Op.ne]: estatResolta.id }
-      },
+      where: whereConditions,
       include: [
         { model: Estat, as: 'estat' },
         { model: Actuacio, as: 'actuacions' },
@@ -45,15 +53,26 @@ router.get('/incidencies', async (req, res) => {
       ],
       order: [[sortField, sortOrder]]
     });
-    
+
+    const prioritats = await Prioritat.findAll(); 
+
     const success = req.query.success;
 
-    res.render('tecnic/list', { incidencies, tecnic, sortField, sortOrder, success });
+    res.render('tecnic/list', {
+      incidencies,
+      tecnic,
+      sortField,
+      sortOrder,
+      success,
+      prioritats,
+      prioritatSeleccionada: prioritatId 
+    });
   } catch (error) {
-    console.error('Error al cargar incidències:', error);
-    res.status(500).send('Error al cargar incidències');
+    console.error('Error al carregar incidències:', error);
+    res.status(500).send('Error al carregar incidències');
   }
 });
+
 
 // Mostrar incidències no assignades
 router.get('/incidencies/noassignades', async (req, res) => {
@@ -123,13 +142,13 @@ router.get('/incidencies/:id/edit', async (req, res) => {
     const departamentos = await Departamento.findAll();
     const prioritats = await Prioritat.findAll();
     const tipus = await Tipus.findAll();
-    const tecnics = await Tecnic.findAll();  // Afegeix els tècnics aquí
+    const tecnics = await Tecnic.findAll(); 
 
     incidencia.dataresolucio = incidencia.dataresolucio
       ? moment(incidencia.dataresolucio).format('YYYY-MM-DD')
       : '';
 
-    res.render('incidencies/edit', { incidencia, departamentos, prioritats, estats: estat, tipus, tecnics });  // Passa tecnics correctament
+    res.render('incidencies/edit', { incidencia, departamentos, prioritats, estats: estat, tipus, tecnics, tecnic: await Tecnic.findByPk(incidencia.tecnic_id)}); 
   } catch (error) {
     console.error('Error al cargar la incidencia:', error);
     res.status(500).send('Error al cargar la incidencia ' + error);
