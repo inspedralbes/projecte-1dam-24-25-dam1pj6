@@ -21,19 +21,17 @@ router.get('/', async (req, res) => {
     let whereConditions = {};
 
     if (search) {
-      whereConditions.nom = { [Op.like]: `%${search}%` };  // Filtro por nombre
+      whereConditions.nom = { [Op.like]: `%${search}%` };  
     }
-
-    // Mapeamos el filtro 'estat' a los valores correctos de la base de datos
     if (estat) {
       if (estat === 'pendiente') {
-        whereConditions.estat_id = { [Op.eq]: 1 };  // "Pendiente d'assignar"
+        whereConditions.estat_id = { [Op.eq]: 1 };  
       } else if (estat === 'assignada') {
-        whereConditions.estat_id = { [Op.eq]: 2 };  // "Assignada"
+        whereConditions.estat_id = { [Op.eq]: 2 };  
       } else if (estat === 'en_proces') {
-        whereConditions.estat_id = { [Op.eq]: 3 };  // "En procés"
+        whereConditions.estat_id = { [Op.eq]: 3 };  
       } else if (estat === 'resuelta') {
-        whereConditions.estat_id = { [Op.eq]: 4 };  // "Resolta"
+        whereConditions.estat_id = { [Op.eq]: 4 };  
       }
     }
 
@@ -63,14 +61,14 @@ router.get('/:id/edit', async (req, res) => {
   try {
     const incidencia = await Incidencia.findByPk(req.params.id);
     if (!incidencia) {
-      return res.status(404).send('Incidencia no encontrada');
+      return res.status(404).send('Incidencia no trobada');
     }
 
     const departamentos = await Departamento.findAll();
     const estats = await Estat.findAll();
     const tecnics = await Tecnic.findAll();  
     const prioritats = await Prioritat.findAll();  
-    const tipus = await Tipus.findAll();  // Cambié 'Tipus' a 'tipus'
+    const tipus = await Tipus.findAll();  
 
     res.render('admin/edit', {
       incidencia,
@@ -78,7 +76,7 @@ router.get('/:id/edit', async (req, res) => {
       estats,
       tecnics,
       prioritats,
-      tipus  // Usa 'tipus' aquí en lugar de 'Tipus'
+      tipus  
     });
   } catch (error) {
     console.error('Error al cargar la incidencia:', error);

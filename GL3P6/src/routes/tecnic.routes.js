@@ -212,7 +212,7 @@ router.post('/incidencies/:id/delete', async (req, res) => {
     if (!incidencia) return res.status(404).send('Incidència no trobada');
 
     await incidencia.destroy();
-    res.redirect('/tecnic/incidencies/resoltes');  // Redirigeix a la llista d'incidències resoltes després d'eliminar
+    res.redirect('/tecnic/incidencies/resoltes');  
   } catch (error) {
     console.error('Error al eliminar la incidència:', error);
     res.status(500).send('Error al eliminar la incidència');
