@@ -8,8 +8,6 @@ const Prioritat = sequelize.define('Prioritat', {
     primaryKey: true, 
     autoIncrement: true 
   },
-  
-
   nom: {
     type: DataTypes.STRING,
     allowNull: false,  
